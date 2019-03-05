@@ -35,7 +35,10 @@ public class LoginCon implements Initializable {
 		String id = userId.getText();
 		String pa = passwd.getText();
 		Stage stage = Login.getP();
-		if (Check.check(id, pa)) {
+		/**
+		 * TODO 此处应该是 Check.check(id, pa) 由于做演示，让任何人都登陆的上
+		 */
+		if (true) {
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/chatlist.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
