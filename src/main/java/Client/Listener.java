@@ -1,7 +1,9 @@
 package Client;
 
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class Listener implements Runnable {
@@ -10,6 +12,8 @@ public class Listener implements Runnable {
 	private static String id;
 	private Socket socket;
 	public ChatCon control;
+	private InputStream inputStream;
+	private OutputStream outputStream;
 	private ObjectInputStream objectInputStream;
 	private static ObjectOutputStream objectOutputStream;
 	public Listener(String server,String port,String id,ChatCon control){
@@ -23,17 +27,28 @@ public class Listener implements Runnable {
 		try {
 			LoginCon.getLoginCon().showScene();
 			socket = new Socket(server, Integer.parseInt(port));
-			objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			objectInputStream = new ObjectInputStream(socket.getInputStream());
+			outputStream =socket.getOutputStream();
+			objectOutputStream = new ObjectOutputStream(outputStream);
+			inputStream = socket.getInputStream();
+			objectInputStream = new ObjectInputStream(inputStream);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
 		try {
 			connect();
 			while (socket.isConnected()){
-				 Message message = (Message)objectInputStream.readObject();
+				Message message = null;
+				 message = (Message)objectInputStream.readObject();
 				 if (message != null){
-				 	control.addChat(message);
+				 	switch (message.getMessageType()){
+						case "CHAT":
+							control.addChat(message);
+							break;
+						case "NOTIFICATION":
+							control.setUserList(message);
+							break;
+						default:
+					}
 				 } else {
 				 	System.out.println("message is null");
 				 }
@@ -46,12 +61,14 @@ public class Listener implements Runnable {
 		objectOutputStream.writeObject(message);
 		objectOutputStream.flush();
 	}
+	// 新建一个message对象，然后设置一些属性
 	public static void connect() throws Exception{
 		Message message = new Message();
 		message.setSendId(id);
 		message.setMessage(null);
-		message.setMessageType("STATUS");
+		message.setMessageType("STATUS:ONLINE");
 		message.setToId(null);
+		message.setList(null);
 		objectOutputStream.writeObject(message);
 	}
 }

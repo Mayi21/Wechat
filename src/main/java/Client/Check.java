@@ -1,21 +1,35 @@
 package Client;
 
-public class Check {
-	private static final String a = "123456";
-	private static final String b = "123456";
-	private static final String userName = "xi";
-	public static boolean check(String account, String passwd){
-		if (a.equals(account) && b.equals(passwd)){
-			return true;
-		} else {
-			return false;
-		}
-	}
+import util.MySqlDao;
 
-	public static String getA() {
-		return a;
-	}
-	public static String getUserName() {
-		return userName;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class Check {
+	private static String id;
+	private static String pa;
+	public static final String SQL = "SELECT * FROM wechat";
+	public static Connection connection;
+	public static boolean check(String account, String passwd){
+		boolean status = false;
+		connection = MySqlDao.getConnection();
+		Statement statement = null;
+		ResultSet resultSet = null;
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(SQL);
+			while (resultSet.next()){
+				Check.id = resultSet.getString("id");
+				Check.pa = resultSet.getString("passwd");
+				if (account.equals(Check.id) & passwd.equals(Check.pa)){
+					status = true;
+					break;
+				}
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return status;
 	}
 }

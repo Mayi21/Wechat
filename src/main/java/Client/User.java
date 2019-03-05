@@ -1,6 +1,8 @@
 package Client;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 	String status;
 	String id;
 	public String getStatus() {

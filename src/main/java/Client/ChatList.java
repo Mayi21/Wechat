@@ -1,7 +1,5 @@
 package Client;
 
-import Client.LoginCon;
-import Client.SendMessage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

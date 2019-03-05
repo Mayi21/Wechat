@@ -1,21 +1,14 @@
 package Client;
 
 import javafx.application.Platform;
-
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
-
-
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -41,10 +34,6 @@ public class LoginCon implements Initializable {
 	public void login() throws Exception{
 		String id = userId.getText();
 		String pa = passwd.getText();
-		/**
-		 * TODO 此处应该是发送给服务器做验证
-		 */
-		Check check = new Check();
 		Stage stage = Login.getP();
 		if (Check.check(id, pa)) {
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/chatlist.fxml"));

@@ -8,10 +8,10 @@ public class Message implements Serializable {
 	private String toId;
 	private String message;
 	private int count;
+	//在线的人
 	private ArrayList<User> list;
-	private ArrayList<User> users;
-	private String messageType;
 
+	private String messageType;
 	public String getMessageType() {
 		return messageType;
 	}
@@ -60,11 +60,4 @@ public class Message implements Serializable {
 		this.list = list;
 	}
 
-	public ArrayList<User> getUsers() {
-		return users;
-	}
-
-	public void setUsers(ArrayList<User> users) {
-		this.users = users;
-	}
 }

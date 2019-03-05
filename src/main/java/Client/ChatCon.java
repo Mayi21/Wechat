@@ -13,10 +13,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.util.Duration;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -82,6 +88,8 @@ public class ChatCon implements Initializable {
 		String msg = messageBox.getText();
 		message.setMessage(msg);
 		if (msg != null){
+			message.setMessageType("CHAT");
+			message.setList(null);
 			Listener.send(message);
 			addChat(message);
 			messageBox.clear();
@@ -93,12 +101,13 @@ public class ChatCon implements Initializable {
 
 	public void setUserList(Message msg) {
 		Platform.runLater(() -> {
-			ObservableList<User> users = FXCollections.observableList(msg.getUsers());
+			ObservableList<User> users = FXCollections.observableList(msg.getList());
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
 			setOnlineLabel(String.valueOf(msg.getList().size()));
 		});
 	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}
