@@ -3,6 +3,8 @@ package Client;
 import Client.Buubble.BubbleSpec;
 import Client.Buubble.BubbledLabel;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -13,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -23,7 +26,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
+import javax.swing.plaf.metal.MetalBorders;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ChatCon implements Initializable {
@@ -33,6 +39,9 @@ public class ChatCon implements Initializable {
 	@FXML private ListView userList;
 	@FXML private ListView chatList;
 	@FXML private Label onlineLabel;
+	@FXML private Label currentId;
+	private static String current = null;
+	private static int count = 0;
 	public synchronized void addChat(Message message){
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
@@ -88,6 +97,7 @@ public class ChatCon implements Initializable {
 		String msg = messageBox.getText();
 		message.setMessage(msg);
 		if (msg != null){
+			message.setToId(current);
 			message.setMessageType("CHAT");
 			message.setList(null);
 			Listener.send(message);
@@ -107,7 +117,14 @@ public class ChatCon implements Initializable {
 			setOnlineLabel(String.valueOf(msg.getList().size()));
 		});
 	}
-
+	public void getToUser(){
+		userList.getSelectionModel().selectedItemProperty().addListener(
+				(ChangeListener<User>) (observable, oldValue, newValue) -> {
+					currentId.setText(newValue.getId());
+					System.out.println("old:" + oldValue.getId() + " new:" + newValue.getId());
+					current = newValue.getId();
+				});
+	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}

@@ -1,7 +1,6 @@
 package Server;
 import Client.Message;
 import Client.User;
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,9 +33,6 @@ public class ServerTest {
 		objectOutputStream = new ObjectOutputStream(outputStream);
 		Message message = (Message)objectInputStream.readObject();
 		if (message.getMessageType().split(":")[0].equals("STATUS") & message.getMessageType().split(":")[1].equals("ONLINE")){
-			/**
-			 * TODO 知道了message.getId()上线，更新userList表；
-			 */
 			if (UserList.getList() == null){
 				UserList.setList(new ArrayList<>());
 			}

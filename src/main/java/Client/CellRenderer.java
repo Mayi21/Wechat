@@ -9,11 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-/**
- * A Class for Rendering users images / name on the userlist.
- */
 class CellRenderer implements Callback<ListView<User>,ListCell<User>>{
-        @Override
+    @Override
     public ListCell<User> call(ListView<User> p) {
         ListCell<User> cell = new ListCell<User>(){
 
@@ -26,7 +23,7 @@ class CellRenderer implements Callback<ListView<User>,ListCell<User>>{
                     HBox hBox = new HBox();
                     Text name = new Text(user.getId());
                     hBox.getChildren().addAll(name);
-                    hBox.setAlignment(Pos.CENTER_LEFT);
+                    hBox.setAlignment(Pos.CENTER);
                     setGraphic(hBox);
                 }
             }

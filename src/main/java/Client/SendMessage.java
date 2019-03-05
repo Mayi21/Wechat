@@ -34,9 +34,6 @@ public class SendMessage implements Initializable{
 			messageBox.clear();
 		}
 	}
-	/**
-	 * TODO 记录两个用户的聊天信息。
-	 */
 	public void recordMessage(String string){
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override

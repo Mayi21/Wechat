@@ -1,5 +1,8 @@
 package Client;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,6 +13,7 @@ public class Listener implements Runnable {
 	private String server;
 	private String port;
 	private static String id;
+	private static String currentId;
 	private Socket socket;
 	public ChatCon control;
 	private InputStream inputStream;
