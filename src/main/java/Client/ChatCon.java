@@ -105,10 +105,17 @@ public class ChatCon implements Initializable {
 
 	public void setUserList(Message msg) {
 		Platform.runLater(() -> {
-			ObservableList<User> users = FXCollections.observableList(msg.getList());
+			List<User> list = msg.getList();
+			for (int i = 0;i < list.size();i++){
+				if (list.get(i).getId().equals(idLabel.getText())){
+					list.remove(i);
+					break;
+				}
+			}
+			ObservableList<User> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
-			setOnlineLabel(String.valueOf(msg.getList().size()));
+			setOnlineLabel(String.valueOf(list.size()));
 		});
 	}
 	public void getToUser(){

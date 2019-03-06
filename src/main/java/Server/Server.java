@@ -89,6 +89,8 @@ public class Server {
 								break;
 							default:
 						}
+					} else {
+						System.out.println(inputMessage.getToId());
 					}
 				}
 			} catch (Exception e) {
