@@ -70,7 +70,6 @@ public class Listener implements Runnable {
 		message.setSendId(id);
 		Listener.control.addChat(message);
 		objectOutputStream.writeObject(message);
-		objectOutputStream.flush();
 	}
 
 	public static void connect() throws Exception{

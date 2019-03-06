@@ -128,13 +128,13 @@ public class Server {
 			if (map.containsKey(toId)) {
 				ObjectOutputStream o = map.get(toId);
 				o.writeObject(message);
-				o.flush();
+				o.reset();
 			}
 		}
 		private void notificationAll (Message message) throws Exception {
 			for (ObjectOutputStream o : set) {
 				o.writeObject(message);
-				o.flush();
+				o.reset();
 			}
 		}
 	}
