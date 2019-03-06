@@ -76,7 +76,7 @@ public class Server {
 						e.printStackTrace();
 					}
 
-					if (inputMessage != null) {
+					if (inputMessage != null & inputMessage.getToId() != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
 						System.out.println(type);
