@@ -67,6 +67,7 @@ public class Server {
 					message.setMessage("你的好友" + message.getSendId() + "已经上线！");
 					message.setSendId(null);
 					set.add(objectOutputStream);
+					System.out.println(set.size());
 					notificationAll(message);
 					//更新在线的用户
 					UserList.setList(list);
