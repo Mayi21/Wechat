@@ -2,7 +2,6 @@ package Server;
 
 import Client.Message;
 import Client.User;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -72,7 +71,8 @@ public class Server {
 				}
 				while (socket.isConnected()) {
 					System.out.println("isconnected");
-					Message inputMessage = (Message) objectInputStream.readObject();
+					//Message inputMessage = (Message) objectInputStream.readObject();
+					Message inputMessage = (Message) new ObjectInputStream(inputStream).readObject();
 					if (inputMessage != null & inputMessage.getToId() != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
@@ -93,6 +93,35 @@ public class Server {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				if (inputStream != null){
+					try {
+						inputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (objectInputStream != null){
+					try {
+						objectInputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (outputStream != null){
+					try {
+						outputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (objectOutputStream != null){
+					try {
+						objectOutputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		private void sendMessage (Message message) throws Exception {
