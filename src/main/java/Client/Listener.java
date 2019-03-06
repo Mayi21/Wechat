@@ -49,6 +49,7 @@ public class Listener implements Runnable {
 							control.addChat(message);
 							break;
 						case "NOTIFICATION":
+							message.getList().remove(id);
 							control.setUserList(message);
 							break;
 						default:
