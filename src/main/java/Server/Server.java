@@ -44,6 +44,7 @@ public class Server {
 				objectInputStream = new ObjectInputStream(inputStream);
 				outputStream = socket.getOutputStream();
 				objectOutputStream = new ObjectOutputStream(outputStream);
+				System.out.println(objectOutputStream.hashCode());
 				Message message = (Message) objectInputStream.readObject();
 				if (message.getMessageType().split(":")[0].equals("STATUS") & message.getMessageType().split(":")[1].equals("ONLINE")) {
 					if (UserList.getList() == null) {
