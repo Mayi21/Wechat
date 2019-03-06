@@ -20,6 +20,7 @@ public class ServerTest {
 	private static HashMap<String, ObjectOutputStream> map = new HashMap<>();
 	public static HashSet<ObjectOutputStream> set = new HashSet<>();
 	public static void main(String[] args) throws Exception{
+		socket = new ServerSocket(8888).accept();
 		setConnect();
 	}
 	public static void setConnect() throws Exception {
