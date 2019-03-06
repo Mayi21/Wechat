@@ -98,7 +98,9 @@ public class Server {
 		private void sendMessage (Message message) throws Exception {
 			String toId = message.getToId();
 			if (map.containsKey(toId)) {
-				map.get(toId).writeObject(message);
+				ObjectOutputStream o = map.get(toId);
+				o.writeObject(message);
+				o.reset();
 			}
 		}
 		private void notificationAll (Message message) throws Exception {
