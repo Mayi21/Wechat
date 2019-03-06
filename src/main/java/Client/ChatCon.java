@@ -115,7 +115,6 @@ public class ChatCon implements Initializable {
 		userList.getSelectionModel().selectedItemProperty().addListener(
 				(ChangeListener<User>) (observable, oldValue, newValue) -> {
 					currentId.setText(newValue.getId());
-					System.out.println("old:" + oldValue.getId() + " new:" + newValue.getId());
 					ChatCon.current = newValue.getId();
 				});
 	}

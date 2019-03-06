@@ -28,7 +28,7 @@
                   <Label prefHeight="22.0" prefWidth="26.0" text="人" />
                </children>
             </HBox>
-            <ListView fx:id="userList" onMouseClicked="#getToUser" prefHeight="493.0" prefWidth="100.0" />
+            <ListView fx:id="userList" onMouseEntered="#getToUser" prefHeight="493.0" prefWidth="100.0" />
          </children>
       </VBox>
    </left>

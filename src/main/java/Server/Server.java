@@ -51,11 +51,7 @@ public class Server {
 					user.setId(id);
 					user.setStatus("ONLINE");
 					//添加这个用户在线
-					try {
-						list.add(user);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					list.add(user);
 					//用于用户对用户发送信息时，进行寻址
 					map.put(id, objectOutputStream);
 					//把消息发给在线的所有人
@@ -74,6 +70,8 @@ public class Server {
 						inputMessage = (Message) objectInputStream.readObject();
 					} catch (EOFException e){
 						e.printStackTrace();
+					} catch (Exception ei){
+						ei.printStackTrace();
 					}
 
 					if (inputMessage != null & inputMessage.getToId() != null) {

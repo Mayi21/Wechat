@@ -15,7 +15,7 @@ public class Listener implements Runnable {
 	private static String id;
 	private static String currentId;
 	private Socket socket;
-	public ChatCon control;
+	public static ChatCon control;
 	private InputStream inputStream;
 	private OutputStream outputStream;
 	private ObjectInputStream objectInputStream;
@@ -24,7 +24,7 @@ public class Listener implements Runnable {
 		Listener.id = id;
 		this.port = port;
 		this.server = server;
-		this.control = control;
+		Listener.control = control;
 	}
 	@Override
 	public void run(){
@@ -68,6 +68,7 @@ public class Listener implements Runnable {
 		message.setMessageType("CHAT");
 		message.setMessage(msg);
 		message.setSendId(id);
+		Listener.control.addChat(message);
 		objectOutputStream.writeObject(message);
 		objectOutputStream.flush();
 	}
