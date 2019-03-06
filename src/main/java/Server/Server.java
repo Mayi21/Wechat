@@ -39,12 +39,10 @@ public class Server {
 		@Override
 		public void run() {
 			try {
-				System.out.println(Thread.currentThread());
 				inputStream = socket.getInputStream();
 				objectInputStream = new ObjectInputStream(inputStream);
 				outputStream = socket.getOutputStream();
 				objectOutputStream = new ObjectOutputStream(outputStream);
-				System.out.println(objectOutputStream.hashCode());
 				Message message = (Message) objectInputStream.readObject();
 				if (message.getMessageType().split(":")[0].equals("STATUS") & message.getMessageType().split(":")[1].equals("ONLINE")) {
 					if (UserList.getList() == null) {
@@ -71,10 +69,10 @@ public class Server {
 					notificationAll(message);
 					//更新在线的用户
 					UserList.setList(list);
-
 				}
 				while (socket.isConnected()) {
 					System.out.println("isconnected");
+					System.out.println(Thread.currentThread());
 					Message inputMessage = (Message) objectInputStream.readObject();
 					if (inputMessage != null & inputMessage.getToId() != null) {
 						String type = inputMessage.getMessageType();
