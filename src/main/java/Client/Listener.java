@@ -61,11 +61,17 @@ public class Listener implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	public static void send(Message message) throws Exception{
+	public static void send(String msg) throws Exception{
+		Message message = new Message();
+		message.setToId(ChatCon.current);
+		message.setList(null);
+		message.setMessageType("CHAT");
+		message.setMessage(msg);
+		message.setSendId(id);
 		objectOutputStream.writeObject(message);
 		objectOutputStream.flush();
 	}
-	// 新建一个message对象，然后设置一些属性
+
 	public static void connect() throws Exception{
 		Message message = new Message();
 		message.setSendId(id);

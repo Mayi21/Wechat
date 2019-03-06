@@ -17,6 +17,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -40,8 +42,7 @@ public class ChatCon implements Initializable {
 	@FXML private ListView chatList;
 	@FXML private Label onlineLabel;
 	@FXML private Label currentId;
-	private static String current = null;
-	private static int count = 0;
+	public static String current;
 	public synchronized void addChat(Message message){
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
@@ -92,16 +93,9 @@ public class ChatCon implements Initializable {
 		this.idLabel.setText(id);
 	}
 	public void send() throws Exception{
-		Message message = new Message();
-		message.setSendId(idLabel.getText());
 		String msg = messageBox.getText();
-		message.setMessage(msg);
-		if (msg != null){
-			message.setToId(current);
-			message.setMessageType("CHAT");
-			message.setList(null);
-			Listener.send(message);
-			addChat(message);
+		if (!messageBox.getText().isEmpty()){
+			Listener.send(msg);
 			messageBox.clear();
 		}
 	}
@@ -122,10 +116,20 @@ public class ChatCon implements Initializable {
 				(ChangeListener<User>) (observable, oldValue, newValue) -> {
 					currentId.setText(newValue.getId());
 					System.out.println("old:" + oldValue.getId() + " new:" + newValue.getId());
-					current = newValue.getId();
+					ChatCon.current = newValue.getId();
 				});
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		messageBox.addEventFilter(KeyEvent.KEY_PRESSED,ke ->{
+			if (ke.getCode().equals(KeyCode.ENTER)){
+				try {
+					send();
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				ke.consume();
+			}
+		});
 	}
 }
