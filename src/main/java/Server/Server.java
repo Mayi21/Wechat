@@ -39,6 +39,7 @@ public class Server {
 		@Override
 		public void run() {
 			try {
+				System.out.println(Thread.currentThread());
 				inputStream = socket.getInputStream();
 				objectInputStream = new ObjectInputStream(inputStream);
 				outputStream = socket.getOutputStream();
@@ -68,6 +69,7 @@ public class Server {
 					notificationAll(message);
 					//更新在线的用户
 					UserList.setList(list);
+
 				}
 				while (socket.isConnected()) {
 					System.out.println("isconnected");
