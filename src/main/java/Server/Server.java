@@ -3,10 +3,7 @@ package Server;
 import Client.Message;
 import Client.User;
 
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -60,9 +57,7 @@ public class Server {
 						e.printStackTrace();
 					}
 					//用于用户对用户发送信息时，进行寻址
-					System.out.println(message.getSendId());
 					map.put(id, objectOutputStream);
-					System.out.println(map.containsKey("123456"));
 					//把消息发给在线的所有人
 					message.setList(list);
 					message.setMessageType("NOTIFICATION");
@@ -74,7 +69,13 @@ public class Server {
 					UserList.setList(list);
 				}
 				while (socket.isConnected()) {
-					Message inputMessage = (Message) objectInputStream.readObject();
+					Message inputMessage = null;
+					try {
+						inputMessage = (Message) objectInputStream.readObject();
+					} catch (EOFException e){
+						e.printStackTrace();
+					}
+
 					if (inputMessage != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
