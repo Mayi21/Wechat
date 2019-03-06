@@ -17,8 +17,14 @@ public class Server {
 
 	public static void main(String[] args) throws Exception {
 		ServerSocket serverSocket = new ServerSocket(8888);
-		while (true) {
-			new Start(serverSocket.accept()).start();
+		try {
+			while (true) {
+				new Start(serverSocket.accept()).start();
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		} finally {
+			serverSocket.close();
 		}
 	}
 	private static class Start extends Thread {
@@ -28,7 +34,7 @@ public class Server {
 		private static OutputStream outputStream;
 		private Socket socket;
 		private String id;
-		public Start(Socket socket) {
+		public Start(Socket socket) throws Exception {
 			this.socket = socket;
 		}
 		@Override
@@ -65,19 +71,11 @@ public class Server {
 					UserList.setList(list);
 				}
 				while (socket.isConnected()) {
-					Message inputMessage = null;
-					try {
-						inputMessage = (Message) objectInputStream.readObject();
-					} catch (EOFException e){
-						e.printStackTrace();
-					} catch (Exception ei){
-						ei.printStackTrace();
-					}
-
+					System.out.println("isconnected");
+					Message inputMessage = (Message) objectInputStream.readObject();
 					if (inputMessage != null & inputMessage.getToId() != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
-						System.out.println(type);
 						switch (type) {
 							case "CHAT":
 								sendMessage(inputMessage);
