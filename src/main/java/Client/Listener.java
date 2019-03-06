@@ -81,5 +81,6 @@ public class Listener implements Runnable {
 		message.setToId(null);
 		message.setList(null);
 		objectOutputStream.writeObject(message);
+		objectOutputStream.flush();
 	}
 }

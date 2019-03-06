@@ -71,8 +71,7 @@ public class Server {
 				}
 				while (socket.isConnected()) {
 					System.out.println("isconnected");
-					//Message inputMessage = (Message) objectInputStream.readObject();
-					Message inputMessage = (Message) new ObjectInputStream(inputStream).readObject();
+					Message inputMessage = (Message) objectInputStream.readObject();
 					if (inputMessage != null & inputMessage.getToId() != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
@@ -129,13 +128,13 @@ public class Server {
 			if (map.containsKey(toId)) {
 				ObjectOutputStream o = map.get(toId);
 				o.writeObject(message);
-				o.reset();
+				o.flush();
 			}
 		}
 		private void notificationAll (Message message) throws Exception {
 			for (ObjectOutputStream o : set) {
 				o.writeObject(message);
-				o.reset();
+				o.flush();
 			}
 		}
 	}
