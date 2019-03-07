@@ -46,7 +46,6 @@ public class Server {
 				id = jsonObject.getString("SendId");
 				list = UserList.getList();
 				list.add(id);
-				//用于用户对用户发送信息时，进行寻址
 				map.put(id, outputStream);
 				set.add(outputStream);
 				jsonObject.put("List",new JSONArray(list));
@@ -55,7 +54,6 @@ public class Server {
 				jsonObject.put("SendId","");
 				jsonObject.put("ToId","");
 				notificationAll(jsonObject);
-				//更新在线的用户
 				UserList.setList(list);
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());

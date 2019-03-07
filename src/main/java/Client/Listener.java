@@ -46,7 +46,7 @@ public class Listener implements Runnable {
 				int len = inputStream.read(bytes);
 				JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
 				String message = jsonObject.getString("Message");
-				 if (message != null){
+				 if (message != null & jsonObject.getString("ToId") != null){
 				 	switch (jsonObject.getString("MessageType")){
 						case "CHAT":
 							control.addChat(jsonObject);

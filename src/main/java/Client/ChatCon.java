@@ -82,7 +82,6 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
-		System.out.println(message.getString("SendId") + "   " + idLabel.getText() + "  " + currentId.getText());
 		if (message.getString("SendId").equals(idLabel.getText())){
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
@@ -108,14 +107,20 @@ public class ChatCon implements Initializable {
 	}
 
 	public void setUserList(JSONObject message) throws Exception{
-		List<String> list = new LinkedList<>();
-		JSONArray jsonArray = message.getJSONArray("List");
-		for (int i = 0;i < jsonArray.length();i++){
-			if (!jsonArray.getString(i).equals(idLabel.getText())){
-				list.add(jsonArray.getString(i));
+
+		Platform.runLater(() ->  {
+			List<String> list = new LinkedList<>();
+			try {
+				JSONArray jsonArray = message.getJSONArray("List");
+				for (int i = 0;i < jsonArray.length();i++){
+					System.out.println(jsonArray + "  " + idLabel.getText());
+					if (!jsonArray.getString(i).equals(idLabel.getText())){
+						list.add(jsonArray.getString(i));
+					}
+				}
+			} catch (Exception e){
+				e.printStackTrace();
 			}
-		}
-		Platform.runLater(() -> {
 			ObservableList<String> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
