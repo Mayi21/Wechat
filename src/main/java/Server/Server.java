@@ -70,6 +70,7 @@ public class Server {
 					//更新在线的用户
 					UserList.setList(list);
 				}
+				
 				Message inputMessage = null;
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
