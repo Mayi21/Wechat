@@ -1,8 +1,5 @@
 package Client;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -68,9 +65,10 @@ public class Listener implements Runnable {
 		message.setMessageType("CHAT");
 		message.setMessage(msg);
 		message.setSendId(id);
-		Listener.control.addChat(message);
 		objectOutputStream.writeObject(message);
+		objectOutputStream.writeObject(null);
 		objectOutputStream.reset();
+		Listener.control.addChat(message);
 	}
 
 	public static void connect() throws Exception{

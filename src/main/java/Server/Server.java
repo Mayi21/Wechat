@@ -72,28 +72,30 @@ public class Server {
 				}
 				Message inputMessage = null;
 				while (socket.isConnected()) {
-					System.out.println("isconnected");
 					System.out.println(Thread.currentThread());
-					inputMessage = (Message) objectInputStream.readObject();
-					if (inputMessage != null & inputMessage.getToId() != null) {
-						String type = inputMessage.getMessageType();
-						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
-						switch (type) {
-							case "CHAT":
-								sendMessage(inputMessage);
-								break;
-							case "DISCONNECT":
-								/**
-								 * TODO 应该是注销用户
-								 */
-								break;
-							default:
+					while ((inputMessage = (Message) objectInputStream.readObject()) != null){
+						if (inputMessage.getToId() != null) {
+							String type = inputMessage.getMessageType();
+							System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
+							switch (type) {
+								case "CHAT":
+									sendMessage(inputMessage);
+									break;
+								case "DISCONNECT":
+									/**
+									 * TODO 应该是注销用户
+									 */
+									break;
+								default:
+							}
+						} else {
+							System.out.println(inputMessage.getToId());
 						}
-					} else {
-						System.out.println(inputMessage.getToId());
 					}
 				}
-			} catch (Exception e) {
+			} catch (EOFException e) {
+				e.printStackTrace();
+			} catch (Exception e){
 				e.printStackTrace();
 			} finally {
 				if (inputStream != null){
