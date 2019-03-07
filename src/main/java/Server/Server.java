@@ -13,7 +13,6 @@ public class Server {
 	private static ArrayList<Client.User> list = new ArrayList<>();
 	private static HashMap<String, ObjectOutputStream> map = new HashMap<>();
 	public static HashSet<ObjectOutputStream> set = new HashSet<>();
-
 	public static void main(String[] args) throws Exception {
 		ServerSocket serverSocket = new ServerSocket(8888);
 		try {
@@ -77,12 +76,8 @@ public class Server {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
 						switch (type) {
-							/**
-							 * TODO 早期应该是个人对个人的，现在为群发
-							 *
-							 */
 							case "CHAT":
-								notificationAll(inputMessage);
+								sendMessage(inputMessage);
 								break;
 							case "DISCONNECT":
 								/**

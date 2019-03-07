@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="540.0" maxWidth="960.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ChatCon">
+<BorderPane maxHeight="540.0" maxWidth="960.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ChatCon">
    <top>
       <HBox prefHeight="51.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0" />
-            <Label fx:id="idLabel" prefHeight="50.0" prefWidth="69.0" text="Label" textAlignment="JUSTIFY" />
-            <Label fx:id="currentId" prefHeight="51.0" prefWidth="117.0" text="Label" />
+            <Label fx:id="idLabel" prefHeight="50.0" prefWidth="69.0" textAlignment="JUSTIFY" />
+            <Label fx:id="currentId" prefHeight="51.0" prefWidth="117.0" />
          </children></HBox>
    </top>
    <left>
@@ -24,7 +24,7 @@
             <HBox prefHeight="50.0" prefWidth="100.0">
                <children>
                   <Label prefHeight="23.0" prefWidth="40.0" text="在线" />
-                  <Label fx:id="onlineLabel" prefHeight="27.0" prefWidth="50.0" text="Label" />
+                  <Label fx:id="onlineLabel" prefHeight="27.0" prefWidth="50.0" />
                   <Label prefHeight="22.0" prefWidth="26.0" text="人" />
                </children>
             </HBox>

@@ -60,8 +60,7 @@ public class Listener implements Runnable {
 	}
 	public static void send(String msg) throws Exception{
 		Message message = new Message();
-		message.setToId(null);
-		//message.setToId(ChatCon.current);
+		message.setToId(ChatCon.current);
 		message.setList(null);
 		message.setMessageType("CHAT");
 		message.setMessage(msg);
