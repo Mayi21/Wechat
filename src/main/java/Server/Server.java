@@ -1,7 +1,5 @@
 package Server;
 
-import Client.User;
-import Client.Message;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -101,7 +99,7 @@ public class Server {
 				}
 			}
 		}
-		public JSONArray getJsonArray(ArrayList<User> list){
+		public JSONArray getJsonArray(ArrayList<String> list){
 			JSONArray jsonArray = new JSONArray(list);
 			return jsonArray;
 		}
