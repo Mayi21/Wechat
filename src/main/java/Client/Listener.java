@@ -67,7 +67,7 @@ public class Listener implements Runnable {
 		message.setSendId(id);
 		objectOutputStream.writeObject(message);
 		objectOutputStream.writeObject(null);
-		objectOutputStream.reset();
+		objectOutputStream.flush();
 		Listener.control.addChat(message);
 	}
 

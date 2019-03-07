@@ -70,12 +70,11 @@ public class Server {
 					//更新在线的用户
 					UserList.setList(list);
 				}
-				
-				Message inputMessage = null;
+
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
-					inputMessage = (Message) objectInputStream.readObject();
-					if (inputMessage.getToId() != null) {
+					Message inputMessage  = (Message) objectInputStream.readObject();
+					if (inputMessage != null & inputMessage.getToId() != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
 						switch (type) {
