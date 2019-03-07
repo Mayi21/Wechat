@@ -1,7 +1,7 @@
 package Server;
 
-import Client.Message;
 import Client.User;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Server {
-	private static ArrayList<User> list = new ArrayList<>();
+	private static ArrayList<Client.User> list = new ArrayList<>();
 	private static HashMap<String, ObjectOutputStream> map = new HashMap<>();
 	public static HashSet<ObjectOutputStream> set = new HashSet<>();
 
@@ -77,6 +77,10 @@ public class Server {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
 						switch (type) {
+							/**
+							 * TODO 早期应该是个人对个人的，现在为群发
+							 *
+							 */
 							case "CHAT":
 								notificationAll(inputMessage);
 								break;
