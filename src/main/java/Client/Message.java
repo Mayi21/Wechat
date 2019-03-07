@@ -7,7 +7,6 @@ public class Message implements Serializable {
 	private String sendId;
 	private String toId;
 	private String message;
-	private int count;
 	//在线的人
 	private ArrayList<User> list;
 
@@ -44,18 +43,9 @@ public class Message implements Serializable {
 		this.message = message;
 	}
 
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
-
 	public ArrayList<User> getList() {
 		return list;
 	}
-
 	public void setList(ArrayList<User> list) {
 		this.list = list;
 	}
