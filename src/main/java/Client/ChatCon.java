@@ -17,6 +17,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -52,7 +53,7 @@ public class ChatCon implements Initializable {
 			@Override
 			protected HBox call() throws Exception {
 				BubbledLabel bubbledLabel =new BubbledLabel();
-				//ImageView imageView = new ImageView(new Image("file:D:\\Study\\JAVA\\idea\\Wechat\\src\\Client\\cityos (2).jpg"));
+				ImageView imageView = new ImageView(new Image("file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\cityos (2).jpg"));
 				bubbledLabel.setText(message.getString("Message"));
 				bubbledLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,null, null)));
 				HBox x = new HBox();

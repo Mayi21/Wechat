@@ -23,6 +23,7 @@
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.fxml</include>
+                    <include>**\\*.jpg</include>
                 </includes>
             </resource>
         </resources>
