@@ -11,8 +11,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.11.Final" level="project" />
     <orderEntry type="library" name="mysql-connector-java-8.0.12" level="project" />
     <orderEntry type="library" name="jfoenix-8.0.8" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.11.Final" level="project" />
   </component>
 </module>
