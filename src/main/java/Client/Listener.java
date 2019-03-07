@@ -41,7 +41,7 @@ public class Listener implements Runnable {
 		try {
 			connect();
 			while (socket.isConnected()){
-				byte[] bytes = null;
+				byte[] bytes = new byte[1024];
 				int len = inputStream.read(bytes);
 				JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
 				String message = jsonObject.getString("Message");

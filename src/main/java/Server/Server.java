@@ -75,7 +75,6 @@ public class Server {
 				UserList.setList(list);
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
-
 					JSONObject inputMessage = get(inputStream);
 					if (inputMessage != null) {
 						String type = inputMessage.getString("MessageType");
@@ -130,7 +129,7 @@ public class Server {
 			}
 		}
 		public JSONObject get(InputStream inputStream) throws Exception{
-			byte[] bytes = null;
+			byte[] bytes = new byte[1024];
 			int len = inputStream.read(bytes);
 			JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
 			return jsonObject;
