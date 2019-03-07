@@ -1,10 +1,15 @@
 package Client;
 
+import io.netty.handler.codec.json.JsonObjectDecoder;
+import org.json.JSONObject;
+
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Listener implements Runnable {
 	private String server;
@@ -14,7 +19,7 @@ public class Listener implements Runnable {
 	private Socket socket;
 	public static ChatCon control;
 	private InputStream inputStream;
-	private OutputStream outputStream;
+	private static OutputStream outputStream;
 	private ObjectInputStream objectInputStream;
 	private static ObjectOutputStream objectOutputStream;
 	public Listener(String server,String port,String id,ChatCon control){
@@ -29,24 +34,24 @@ public class Listener implements Runnable {
 			LoginCon.getLoginCon().showScene();
 			socket = new Socket(server, Integer.parseInt(port));
 			outputStream =socket.getOutputStream();
-			objectOutputStream = new ObjectOutputStream(outputStream);
 			inputStream = socket.getInputStream();
-			objectInputStream = new ObjectInputStream(inputStream);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
 		try {
 			connect();
 			while (socket.isConnected()){
-				 Message message = null;
-				 message = (Message)objectInputStream.readObject();
+				byte[] bytes = null;
+				int len = inputStream.read(bytes);
+				JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
+				String message = jsonObject.getString("Message");
 				 if (message != null){
-				 	switch (message.getMessageType()){
+				 	switch (jsonObject.getString("MessageType")){
 						case "CHAT":
-							control.addChat(message);
+							control.addChat(jsonObject);
 							break;
 						case "NOTIFICATION":
-							control.setUserList(message);
+							control.setUserList(jsonObject);
 							break;
 						default:
 					}
@@ -59,23 +64,23 @@ public class Listener implements Runnable {
 		}
 	}
 	public static void send(String msg) throws Exception{
-		Message message = new Message();
-		message.setToId(ChatCon.current);
-		message.setList(null);
-		message.setMessageType("CHAT");
-		message.setMessage(msg);
-		message.setSendId(id);
-		objectOutputStream.writeObject(message);
-		objectOutputStream.flush();
-		Listener.control.addChat(message);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("ToId",ChatCon.current);
+		jsonObject.put("List", new ArrayList(){});
+		jsonObject.put("MessageType","CHAT");
+		jsonObject.put("Message",msg);
+		jsonObject.put("SendId",id);
+		byte[] bytes = jsonObject.toString().getBytes();
+		outputStream.write(bytes);
 	}
 	public static void connect() throws Exception{
-		Message message = new Message();
-		message.setSendId(id);
-		message.setMessage(null);
-		message.setMessageType("STATUS:ONLINE");
-		message.setToId(null);
-		message.setList(null);
-		objectOutputStream.writeObject(message);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("SendId",id);
+		jsonObject.put("Message","");
+		jsonObject.put("MessageType","STATUS:ONLINE");
+		jsonObject.put("ToId","");
+		jsonObject.put("List",new ArrayList(){});
+		byte[] bytes = jsonObject.toString().getBytes();
+		outputStream.write(bytes);
 	}
 }

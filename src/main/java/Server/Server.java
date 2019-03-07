@@ -2,6 +2,8 @@ package Server;
 
 import Client.User;
 import Client.Message;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,8 +13,8 @@ import java.util.HashSet;
 
 public class Server {
 	private static ArrayList<Client.User> list = new ArrayList<>();
-	private static HashMap<String, ObjectOutputStream> map = new HashMap<>();
-	public static HashSet<ObjectOutputStream> set = new HashSet<>();
+	private static HashMap<String, OutputStream> map = new HashMap<>();
+	public static HashSet<OutputStream> set = new HashSet<>();
 	public static void main(String[] args) throws Exception {
 		ServerSocket serverSocket = new ServerSocket(8888);
 		try {
@@ -39,42 +41,44 @@ public class Server {
 		public void run() {
 			try {
 				inputStream = socket.getInputStream();
-				objectInputStream = new ObjectInputStream(inputStream);
+				//objectInputStream = new ObjectInputStream(inputStream);
 				outputStream = socket.getOutputStream();
-				objectOutputStream = new ObjectOutputStream(outputStream);
-				Message message = (Message) objectInputStream.readObject();
-				if (message.getMessageType().split(":")[0].equals("STATUS") & message.getMessageType().split(":")[1].equals("ONLINE")) {
-					if (UserList.getList() == null) {
-						UserList.setList(new ArrayList<>());
-					}
-					id = message.getSendId();
-					list = UserList.getList();
-					User user = new User();
-					//设置user的属性
-					user.setId(id);
-					user.setStatus("ONLINE");
-					//添加这个用户在线
-					list.add(user);
-					//用于用户对用户发送信息时，进行寻址
-					map.put(id, objectOutputStream);
-					//把消息发给在线的所有人
-					message.setList(list);
-					message.setMessageType("NOTIFICATION");
-					message.setMessage(null);
-					message.setSendId(null);
-					message.setToId(null);
-					set.add(objectOutputStream);
-					notificationAll(message);
-					//更新在线的用户
-					UserList.setList(list);
+				//objectOutputStream = new ObjectOutputStream(outputStream);
+				JSONObject jsonObject = get(inputStream);
+				if (UserList.getList() == null) {
+					UserList.setList(new ArrayList<>());
 				}
-
+				id = jsonObject.getString("SendId");
+				list = UserList.getList();
+				User user = new User();
+				//设置user的属性
+				user.setId(id);
+				user.setStatus("ONLINE");
+				//添加这个用户在线
+				list.add(user);
+				//用于用户对用户发送信息时，进行寻址
+				map.put(id, outputStream);
+				//把消息发给在线的所有人
+//				message.setList(list);
+//				message.setMessageType("NOTIFICATION");
+//				message.setMessage(null);
+//				message.setSendId(null);
+//				message.setToId(null);
+				jsonObject.put("List",list);
+				jsonObject.put("MessageType","NOTIFICATION");
+				jsonObject.put("Message","");
+				jsonObject.put("SendId","");
+				jsonObject.put("ToId","");
+				set.add(outputStream);
+				notificationAll(jsonObject);
+				//更新在线的用户
+				UserList.setList(list);
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
-					Message inputMessage  = (Message) objectInputStream.readObject();
+
+					JSONObject inputMessage = get(inputStream);
 					if (inputMessage != null) {
-						String type = inputMessage.getMessageType();
-						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
+						String type = inputMessage.getString("MessageType");
 						switch (type) {
 							case "CHAT":
 								sendMessage(inputMessage);
@@ -87,7 +91,7 @@ public class Server {
 							default:
 						}
 					} else {
-						System.out.println(inputMessage.getToId());
+						System.out.println(inputMessage.getString("ToId"));
 					}
 				}
 			} catch (EOFException e) {
@@ -125,18 +129,25 @@ public class Server {
 				}
 			}
 		}
-		private void sendMessage (Message message) throws Exception {
-			String toId = message.getToId();
+		public JSONObject get(InputStream inputStream) throws Exception{
+			byte[] bytes = null;
+			int len = inputStream.read(bytes);
+			JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
+			return jsonObject;
+		}
+		private void sendMessage (JSONObject message) throws Exception {
+			String toId = message.getString("ToId");
 			if (map.containsKey(toId)) {
-				ObjectOutputStream o = map.get(toId);
-				o.writeObject(message);
-				o.reset();
+				OutputStream o = map.get(toId);
+				o.write(message.toString().getBytes());
+				o.flush();
 			}
 		}
-		private void notificationAll (Message message) throws Exception {
-			for (ObjectOutputStream o : set) {
-				o.writeObject(message);
-				o.reset();
+		private void notificationAll (JSONObject message) throws Exception {
+			for (OutputStream o : set) {
+				byte[] bytes = message.toString().getBytes();
+				o.write(bytes);
+				o.flush();
 			}
 		}
 

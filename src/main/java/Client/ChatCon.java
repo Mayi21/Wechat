@@ -27,6 +27,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
+import netscape.javascript.JSObject;
+import org.json.JSONObject;
 
 import javax.swing.plaf.metal.MetalBorders;
 import java.net.URL;
@@ -43,13 +45,13 @@ public class ChatCon implements Initializable {
 	@FXML private Label onlineLabel;
 	@FXML private Label currentId;
 	public static String current;
-	public synchronized void addChat(Message message){
+	public synchronized void addChat(JSONObject message) throws Exception{
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
 				BubbledLabel bubbledLabel =new BubbledLabel();
 				//ImageView imageView = new ImageView(new Image("file:D:\\Study\\JAVA\\idea\\Wechat\\src\\Client\\cityos (2).jpg"));
-				bubbledLabel.setText(message.getMessage());
+				bubbledLabel.setText(message.getString("Message"));
 				bubbledLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_RIGHT);
@@ -66,7 +68,7 @@ public class ChatCon implements Initializable {
 			@Override
 			protected HBox call() throws Exception {
 				BubbledLabel bubbledLabel = new BubbledLabel();
-				bubbledLabel.setText(message.getSendId() + " : " +message.getMessage());
+				bubbledLabel.setText(message.getString("SendId") + " : " + message.getString("Message"));
 				bubbledLabel.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY,null,null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_LEFT);
@@ -78,7 +80,7 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
-		if (message.getSendId().equals(idLabel.getText())){
+		if (message.getString("SendId").equals(idLabel.getText())){
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
 			thread.start();
@@ -96,7 +98,6 @@ public class ChatCon implements Initializable {
 		String msg = messageBox.getText();
 		if (!messageBox.getText().isEmpty()){
 			Listener.send(msg);
-
 			messageBox.clear();
 		}
 	}
@@ -104,15 +105,15 @@ public class ChatCon implements Initializable {
 		Platform.runLater(() -> onlineLabel.setText(usercount));
 	}
 
-	public void setUserList(Message msg) {
-		Platform.runLater(() -> {
-			List<User> list = msg.getList();
-			for (int i = 0;i < list.size();i++){
-				if (list.get(i).getId().equals(idLabel.getText())){
-					list.remove(i);
-					break;
-				}
+	public void setUserList(JSONObject message) throws Exception{
+		List<User> list = (ArrayList)message.get("List");
+		for (int i = 0;i < list.size();i++){
+			if (list.get(i).getId().equals(idLabel.getText())){
+				list.remove(i);
+				break;
 			}
+		}
+		Platform.runLater(() -> {
 			ObservableList<User> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
