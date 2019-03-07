@@ -41,7 +41,7 @@ public class Listener implements Runnable {
 		try {
 			connect();
 			while (socket.isConnected()){
-				Message message = null;
+				 Message message = null;
 				 message = (Message)objectInputStream.readObject();
 				 if (message != null){
 				 	switch (message.getMessageType()){

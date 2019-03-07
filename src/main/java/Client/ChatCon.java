@@ -96,6 +96,7 @@ public class ChatCon implements Initializable {
 		String msg = messageBox.getText();
 		if (!messageBox.getText().isEmpty()){
 			Listener.send(msg);
+
 			messageBox.clear();
 		}
 	}
