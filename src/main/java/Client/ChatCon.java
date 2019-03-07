@@ -11,6 +11,8 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -23,10 +25,16 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import netscape.javascript.JSObject;
 import org.json.JSONArray;
@@ -126,6 +134,40 @@ public class ChatCon implements Initializable {
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
 			setOnlineLabel(String.valueOf(list.size()));
+
+			Text text = null;
+			try {
+				text = new Text(message.getString("Message"));
+				text.setFont(new Font(15));
+				text.setFill(Color.BLACK);
+				VBox box = new VBox();
+				box.getChildren().add(text);
+				box.setStyle("-fx-background-color: white");
+
+				final int width = 200;
+				final int height = 50;
+				final Scene scene = new Scene(box, width, height);
+				scene.setFill(null);
+
+				final Stage stage = new Stage();
+				stage.initStyle(StageStyle.TRANSPARENT);
+				stage.setScene(scene);
+				Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+				stage.setX(primaryScreenBounds.getWidth() - width - 50);
+				stage.setY(primaryScreenBounds.getHeight() - height - 50);
+				stage.show();
+				Task t = new Task() {
+					@Override
+					protected Object call() throws Exception {
+						Thread.sleep(1000);
+						Platform.runLater(stage::close);
+						return "";
+					}
+				};
+				new Thread(t).start();
+			} catch (Exception e){
+				e.printStackTrace();
+			}
 		});
 	}
 	public void getToUser(){

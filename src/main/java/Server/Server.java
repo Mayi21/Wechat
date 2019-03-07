@@ -50,7 +50,7 @@ public class Server {
 				set.add(outputStream);
 				jsonObject.put("List",new JSONArray(list));
 				jsonObject.put("MessageType","NOTIFICATION");
-				jsonObject.put("Message","");
+				jsonObject.put("Message","您的好友" + id + "已经上线!");
 				jsonObject.put("SendId","");
 				jsonObject.put("ToId","");
 				notificationAll(jsonObject);
