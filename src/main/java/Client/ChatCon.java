@@ -28,11 +28,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import netscape.javascript.JSObject;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.plaf.metal.MetalBorders;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -106,11 +108,11 @@ public class ChatCon implements Initializable {
 	}
 
 	public void setUserList(JSONObject message) throws Exception{
-		List<String> list = (ArrayList)message.get("List");
-		for (int i = 0;i < list.size();i++){
-			if (list.get(i).equals(idLabel.getText())){
-				list.remove(i);
-				break;
+		List<String> list = new LinkedList<>();
+		JSONArray jsonArray = message.getJSONArray("List");
+		for (int i = 0;i < jsonArray.length();i++){
+			if (!jsonArray.getString(i).equals(idLabel.getText())){
+				list.add(jsonArray.getString(i));
 			}
 		}
 		Platform.runLater(() -> {
@@ -122,9 +124,9 @@ public class ChatCon implements Initializable {
 	}
 	public void getToUser(){
 		userList.getSelectionModel().selectedItemProperty().addListener(
-				(ChangeListener<User>) (observable, oldValue, newValue) -> {
-					currentId.setText(newValue.getId());
-					ChatCon.current = newValue.getId();
+				(ChangeListener<String>) (observable, oldValue, newValue) -> {
+					currentId.setText(newValue);
+					ChatCon.current = newValue;
 				});
 	}
 	@Override
