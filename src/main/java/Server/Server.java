@@ -2,6 +2,7 @@ package Server;
 
 import Client.User;
 import Client.Message;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Server {
-	private static ArrayList<Client.User> list = new ArrayList<>();
+	private static ArrayList<String> list = new ArrayList<>();
 	private static HashMap<String, OutputStream> map = new HashMap<>();
 	public static HashSet<OutputStream> set = new HashSet<>();
 	public static void main(String[] args) throws Exception {
@@ -52,18 +53,14 @@ public class Server {
 				list = UserList.getList();
 				User user = new User();
 				//设置user的属性
-				user.setId(id);
-				user.setStatus("ONLINE");
+//				user.setId(id);
+//				user.setStatus("ONLINE");
 				//添加这个用户在线
-				list.add(user);
+				list.add(id);
 				//用于用户对用户发送信息时，进行寻址
 				map.put(id, outputStream);
 				//把消息发给在线的所有人
-//				message.setList(list);
-//				message.setMessageType("NOTIFICATION");
-//				message.setMessage(null);
-//				message.setSendId(null);
-//				message.setToId(null);
+
 				jsonObject.put("List",list);
 				jsonObject.put("MessageType","NOTIFICATION");
 				jsonObject.put("Message","");
@@ -127,6 +124,10 @@ public class Server {
 					}
 				}
 			}
+		}
+		public JSONArray getJsonArray(ArrayList<User> list){
+			JSONArray jsonArray = new JSONArray(list);
+			return jsonArray;
 		}
 		public JSONObject get(InputStream inputStream) throws Exception{
 			byte[] bytes = new byte[1024];

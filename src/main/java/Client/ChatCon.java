@@ -106,15 +106,15 @@ public class ChatCon implements Initializable {
 	}
 
 	public void setUserList(JSONObject message) throws Exception{
-		List<User> list = (ArrayList)message.get("List");
+		List<String> list = (ArrayList)message.get("List");
 		for (int i = 0;i < list.size();i++){
-			if (list.get(i).getId().equals(idLabel.getText())){
+			if (list.get(i).equals(idLabel.getText())){
 				list.remove(i);
 				break;
 			}
 		}
 		Platform.runLater(() -> {
-			ObservableList<User> users = FXCollections.observableList(list);
+			ObservableList<String> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
 			setOnlineLabel(String.valueOf(list.size()));

@@ -9,19 +9,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-class CellRenderer implements Callback<ListView<User>,ListCell<User>>{
+class CellRenderer implements Callback<ListView<String>,ListCell<String>>{
     @Override
-    public ListCell<User> call(ListView<User> p) {
-        ListCell<User> cell = new ListCell<User>(){
+    public ListCell<String> call(ListView<String> p) {
+        ListCell<String> cell = new ListCell<String>(){
 
             @Override
-            protected void updateItem(User user, boolean bln) {
+            protected void updateItem(String user, boolean bln) {
                 super.updateItem(user, bln);
                 setGraphic(null);
                 setText(null);
                 if (user != null) {
                     HBox hBox = new HBox();
-                    Text name = new Text(user.getId());
+                    Text name = new Text(user);
                     hBox.getChildren().addAll(name);
                     hBox.setAlignment(Pos.CENTER);
                     setGraphic(hBox);

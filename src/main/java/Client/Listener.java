@@ -1,6 +1,7 @@
 package Client;
 
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -65,8 +66,9 @@ public class Listener implements Runnable {
 	}
 	public static void send(String msg) throws Exception{
 		JSONObject jsonObject = new JSONObject();
+
 		jsonObject.put("ToId",ChatCon.current);
-		jsonObject.put("List", new ArrayList(){});
+		jsonObject.put("List",new JSONArray());
 		jsonObject.put("MessageType","CHAT");
 		jsonObject.put("Message",msg);
 		jsonObject.put("SendId",id);
@@ -79,7 +81,7 @@ public class Listener implements Runnable {
 		jsonObject.put("Message","");
 		jsonObject.put("MessageType","STATUS:ONLINE");
 		jsonObject.put("ToId","");
-		jsonObject.put("List",new ArrayList(){});
+		jsonObject.put("List",new JSONArray());
 		byte[] bytes = jsonObject.toString().getBytes();
 		outputStream.write(bytes);
 	}

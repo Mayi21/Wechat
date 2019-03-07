@@ -58,7 +58,7 @@
                <children>
                   <Label text="Server" GridPane.halignment="CENTER" />
                   <Label text="Port" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                  <TextField fx:id="server" maxHeight="30.4" maxWidth="200.0" text="114.116.109.95" GridPane.columnIndex="1" />
+                  <TextField fx:id="server" maxHeight="30.4" maxWidth="200.0" text="localhost" GridPane.columnIndex="1" />
                   <TextField fx:id="port" maxHeight="30.4" maxWidth="200.0" text="8888" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>

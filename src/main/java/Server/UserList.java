@@ -1,16 +1,15 @@
 package Server;
 
-import Client.User;
 
 import java.util.ArrayList;
 
 public class UserList {
-	private static ArrayList<User> list;
-	public static ArrayList<User> getList() {
+	private static ArrayList<String> list;
+	public static ArrayList<String> getList() {
 		return list;
 	}
 
-	public static void setList(ArrayList<User> list) {
+	public static void setList(ArrayList<String> list) {
 		UserList.list = list;
 	}
 }
