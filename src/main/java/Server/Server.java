@@ -48,9 +48,8 @@ public class Server {
 					if (UserList.getList() == null) {
 						UserList.setList(new ArrayList<>());
 					}
-					list = UserList.getList();
-					//拿到发送人的id
 					id = message.getSendId();
+					list = UserList.getList();
 					User user = new User();
 					//设置user的属性
 					user.setId(id);
@@ -62,10 +61,10 @@ public class Server {
 					//把消息发给在线的所有人
 					message.setList(list);
 					message.setMessageType("NOTIFICATION");
-					message.setMessage("你的好友" + message.getSendId() + "已经上线！");
+					message.setMessage(null);
 					message.setSendId(null);
+					message.setToId(null);
 					set.add(objectOutputStream);
-					System.out.println(set.size());
 					notificationAll(message);
 					//更新在线的用户
 					UserList.setList(list);
@@ -74,7 +73,7 @@ public class Server {
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
 					Message inputMessage  = (Message) objectInputStream.readObject();
-					if (inputMessage != null & inputMessage.getToId() != null) {
+					if (inputMessage != null) {
 						String type = inputMessage.getMessageType();
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
 						switch (type) {
