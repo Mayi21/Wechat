@@ -60,7 +60,8 @@ public class Listener implements Runnable {
 	}
 	public static void send(String msg) throws Exception{
 		Message message = new Message();
-		message.setToId(ChatCon.current);
+		message.setToId(null);
+		//message.setToId(ChatCon.current);
 		message.setList(null);
 		message.setMessageType("CHAT");
 		message.setMessage(msg);
@@ -69,7 +70,6 @@ public class Listener implements Runnable {
 		objectOutputStream.flush();
 		Listener.control.addChat(message);
 	}
-
 	public static void connect() throws Exception{
 		Message message = new Message();
 		message.setSendId(id);

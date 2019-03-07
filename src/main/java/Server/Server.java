@@ -79,7 +79,7 @@ public class Server {
 						System.out.println("send:" + inputMessage.getSendId() + "to:" + inputMessage.getToId());
 						switch (type) {
 							case "CHAT":
-								sendMessage(inputMessage);
+								notificationAll(inputMessage);
 								break;
 							case "DISCONNECT":
 								/**
