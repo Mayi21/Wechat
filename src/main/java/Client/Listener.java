@@ -66,12 +66,12 @@ public class Listener implements Runnable {
 	}
 	public static void send(String msg) throws Exception{
 		JSONObject jsonObject = new JSONObject();
-
 		jsonObject.put("ToId",ChatCon.current);
 		jsonObject.put("List",new JSONArray());
 		jsonObject.put("MessageType","CHAT");
 		jsonObject.put("Message",msg);
 		jsonObject.put("SendId",id);
+		control.addChat(jsonObject);
 		byte[] bytes = jsonObject.toString().getBytes();
 		outputStream.write(bytes);
 	}

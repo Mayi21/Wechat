@@ -29,9 +29,7 @@ public class Server {
 		}
 	}
 	private static class Start extends Thread {
-		private static ObjectOutputStream objectOutputStream;
 		private static InputStream inputStream;
-		private static ObjectInputStream objectInputStream;
 		private static OutputStream outputStream;
 		private Socket socket;
 		private String id;
@@ -42,9 +40,7 @@ public class Server {
 		public void run() {
 			try {
 				inputStream = socket.getInputStream();
-				//objectInputStream = new ObjectInputStream(inputStream);
 				outputStream = socket.getOutputStream();
-				//objectOutputStream = new ObjectOutputStream(outputStream);
 				JSONObject jsonObject = get(inputStream);
 				if (UserList.getList() == null) {
 					UserList.setList(new ArrayList<>());
@@ -54,18 +50,19 @@ public class Server {
 				list.add(id);
 				//用于用户对用户发送信息时，进行寻址
 				map.put(id, outputStream);
+				set.add(outputStream);
 				jsonObject.put("List",new JSONArray(list));
 				jsonObject.put("MessageType","NOTIFICATION");
 				jsonObject.put("Message","");
 				jsonObject.put("SendId","");
 				jsonObject.put("ToId","");
-				set.add(outputStream);
 				notificationAll(jsonObject);
 				//更新在线的用户
 				UserList.setList(list);
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
-					JSONObject inputMessage = get(inputStream);
+					JSONObject inputMessage = get(socket.getInputStream());
+					System.out.println(inputMessage);
 					if (inputMessage != null) {
 						String type = inputMessage.getString("MessageType");
 						switch (type) {
@@ -95,23 +92,9 @@ public class Server {
 						e.printStackTrace();
 					}
 				}
-				if (objectInputStream != null){
-					try {
-						objectInputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
 				if (outputStream != null){
 					try {
 						outputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (objectOutputStream != null){
-					try {
-						objectOutputStream.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -123,7 +106,7 @@ public class Server {
 			return jsonArray;
 		}
 		public JSONObject get(InputStream inputStream) throws Exception{
-			byte[] bytes = new byte[1024];
+			byte[] bytes = new byte[4096];
 			int len = inputStream.read(bytes);
 			JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
 			return jsonObject;

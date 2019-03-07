@@ -82,6 +82,7 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
+		System.out.println(message.getString("SendId") + "   " + idLabel.getText() + "  " + currentId.getText());
 		if (message.getString("SendId").equals(idLabel.getText())){
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
@@ -91,7 +92,6 @@ public class ChatCon implements Initializable {
 			thread.setDaemon(true);
 			thread.start();
 		}
-
 	}
 	public void setUserLabel(String id){
 		this.idLabel.setText(id);
