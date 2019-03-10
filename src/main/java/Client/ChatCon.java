@@ -4,7 +4,6 @@ import Client.Buubble.BubbleSpec;
 import Client.Buubble.BubbledLabel;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -17,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -26,23 +24,15 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
-import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import javax.swing.plaf.metal.MetalBorders;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -55,6 +45,7 @@ public class ChatCon implements Initializable {
 	@FXML private ListView chatList;
 	@FXML private Label onlineLabel;
 	@FXML private Label currentId;
+	@FXML private ImageView image;
 	public static String current;
 	public synchronized void addChat(JSONObject message) throws Exception{
 		Task<HBox> hBoxTask = new Task<HBox>() {
@@ -104,6 +95,11 @@ public class ChatCon implements Initializable {
 	public void setUserLabel(String id){
 		this.idLabel.setText(id);
 	}
+	public void setImageView(String id){
+		String url = "file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
+		Image image = new Image(url);
+		this.image.setImage(image);
+	}
 	public void send() throws Exception{
 		String msg = messageBox.getText();
 		if (!messageBox.getText().isEmpty()){
@@ -134,7 +130,6 @@ public class ChatCon implements Initializable {
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
 			setOnlineLabel(String.valueOf(list.size()));
-
 			Text text = null;
 			try {
 				text = new Text(message.getString("Message"));

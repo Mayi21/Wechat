@@ -11,6 +11,7 @@ public class Check {
 	private static String pa;
 	public static final String SQL = "SELECT * FROM wechat";
 	public static Connection connection;
+	public static String userName;
 	public static boolean check(String account, String passwd){
 		boolean status = false;
 		connection = MySqlDao.getConnection();
@@ -23,6 +24,7 @@ public class Check {
 				Check.id = resultSet.getString("id");
 				Check.pa = resultSet.getString("passwd");
 				if (account.equals(Check.id) & passwd.equals(Check.pa)){
+					userName = resultSet.getString("userName");
 					status = true;
 					break;
 				}
