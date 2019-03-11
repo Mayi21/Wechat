@@ -107,13 +107,11 @@ public class ChatCon implements Initializable {
 		}
 	}
 	public void setUserList(JSONObject message) throws Exception{
-
 		Platform.runLater(() ->  {
 			List<String> list = new LinkedList<>();
 			try {
 				JSONArray jsonArray = message.getJSONArray("List");
 				for (int i = 0;i < jsonArray.length();i++){
-					System.out.println(jsonArray + "  " + idLabel.getText());
 					if (!jsonArray.getString(i).equals(idLabel.getText())){
 						list.add(jsonArray.getString(i));
 					}
@@ -124,7 +122,6 @@ public class ChatCon implements Initializable {
 			ObservableList<String> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
-			//setOnlineLabel(String.valueOf(list.size()));
 			Text text = null;
 			try {
 				text = new Text(message.getString("Message"));

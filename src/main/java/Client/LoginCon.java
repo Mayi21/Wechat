@@ -49,7 +49,6 @@ public class LoginCon implements Initializable {
 		 */
 		if (Check.check(id,pa)) {
 			userName = Check.userName;
-			//FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/chatlist.fxml"));
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
@@ -59,7 +58,6 @@ public class LoginCon implements Initializable {
 			this.scene = new Scene(parent);
 		} else {
 			dong();
-			userId.clear();
 			passwd.clear();
 
 		}
@@ -86,12 +84,10 @@ public class LoginCon implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 	}
 	public void dong(){
-		System.out.println("0" + " " + loginButton.getLayoutX() + " " + loginButton.getLayoutY());
 		//创建一个路径对象
 		Path path = new Path();
 		double x=loginButton.getLayoutX() - 100;
 		double y=loginButton.getLayoutY() - 85;
-		System.out.println("1" +" " + x + "  " + y);
 		//从哪个位置开始动画，一般来说给组件的默认位置就行
 		path.getElements().add(new MoveTo(x, y));
 		//添加一个向左移动的路径
@@ -104,7 +100,6 @@ public class LoginCon implements Initializable {
 		path.getElements().add(new LineTo(x+20, y));
 		//最后移动到原来的位置
 		path.getElements().add(new LineTo(x, y));
-		System.out.println("2" + " " +x + "  " + y);
 		//创建一个动画对象
 		PathTransition pathTransition = new PathTransition();
 		//动画持续时间 0.5秒
@@ -115,7 +110,6 @@ public class LoginCon implements Initializable {
 		pathTransition.setNode(loginButton);
 		//执行1遍
 		pathTransition.setCycleCount(1);
-		System.out.println("3" + " " + x + "  " + y);
 		//执行动画
 		pathTransition.play();
 	}
