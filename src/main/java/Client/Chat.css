@@ -1,3 +1,17 @@
-.button{
+#messageSendButton{
     -fx-background-color: RGB(40,156,255);
+}
+#button1{
+    -fx-background-color: #7fccf9;
+    -fx-background-radius: 30px;
+}
+#button2{
+    -fx-background-color: #7fccf9;
+    -fx-background-radius: 30px;
+}
+#button2:hover{
+    -fx-background-color: RED;
+}
+#button1:hover{
+    -fx-background-color: WHITE;
 }

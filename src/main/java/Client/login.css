@@ -11,3 +11,9 @@
 .password-field{
     -fx-background-radius: 20px;
 }
+#tui:hover{
+    -fx-background-color: RED;
+}
+#xiao:hover{
+    -fx-background-color: WHITE;
+}

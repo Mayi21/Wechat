@@ -34,6 +34,7 @@ public class LoginCon implements Initializable {
 	private Scene scene;
 	public static LoginCon loginCon;
 	public static String userName;
+	public static Stage stage;
 	public LoginCon(){
 		loginCon = this;
 	}
@@ -43,7 +44,7 @@ public class LoginCon implements Initializable {
 	public void login() throws Exception{
 		String id = userId.getText();
 		String pa = passwd.getText();
-		Stage stage = Login.getP();
+		//Stage stage = Login.getP();
 		/**
 		 * TODO 此处应该是 Check.check(id, pa) 由于做演示，让任何人都登陆的上
 		 */
@@ -61,6 +62,12 @@ public class LoginCon implements Initializable {
 			passwd.clear();
 
 		}
+	}
+	public void xiao(){
+		Login.getP().setIconified(true);
+	}
+	public void tui(){
+		Login.getP().close();
 	}
 	public void showScene() throws IOException {
 		Platform.runLater(() -> {
@@ -113,6 +120,7 @@ public class LoginCon implements Initializable {
 		//执行动画
 		pathTransition.play();
 	}
+
 	public String getId(){
 		return userId.getText();
 	}

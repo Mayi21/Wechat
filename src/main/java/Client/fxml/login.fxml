@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -14,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="601.0" style="-fx-background-color: linear-gradient(to right,#a1c4fd,#c2e9fb);"   stylesheets="@../login.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.LoginCon">
+<BorderPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="601.0" style="-fx-background-color: linear-gradient(to right,#a1c4fd,#c2e9fb);" stylesheets="@../login.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.LoginCon">
     <center>
         <GridPane alignment="CENTER" prefHeight="191.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <columnConstraints>
@@ -40,13 +37,19 @@
     </center>
     <top>
         <HBox prefHeight="163.0" prefWidth="591.0" BorderPane.alignment="CENTER">
-            <children>
-                <ImageView fx:id="loginImage" fitHeight="164.0" fitWidth="613.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../../resources/login.png" />
-                    </image>
-                </ImageView>
-            </children></HBox>
+         <children>
+            <HBox prefHeight="163.0" prefWidth="539.0" />
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <HBox prefHeight="32.0" prefWidth="82.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" text="-" onMouseClicked="#xiao" fx:id="xiao"/>
+                        <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" text="X" onMouseClicked="#tui" fx:id="tui"/>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children></HBox>
     </top>
     <bottom>
         <VBox prefHeight="95.0" prefWidth="600.0" BorderPane.alignment="CENTER">
@@ -62,8 +65,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label text="Server" GridPane.halignment="CENTER" />
-                        <Label text="Port" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                         <TextField fx:id="server" maxHeight="30.4" maxWidth="200.0" text="localhost" GridPane.columnIndex="1" />
                         <TextField fx:id="port" maxHeight="30.4" maxWidth="200.0" text="8888" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     </children>

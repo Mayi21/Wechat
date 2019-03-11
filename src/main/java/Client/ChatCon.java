@@ -45,6 +45,7 @@ public class ChatCon implements Initializable {
 	@FXML private ListView chatList;
 	@FXML private Label currentId;
 	@FXML private ImageView image;
+	//public static Stage stage = new Stage();
 	public static String current;
 	public synchronized void addChat(JSONObject message) throws Exception{
 		Task<HBox> hBoxTask = new Task<HBox>() {
@@ -106,6 +107,12 @@ public class ChatCon implements Initializable {
 			messageBox.clear();
 		}
 	}
+//	public void xiao(){
+//		stage.setIconified(true);
+//	}
+//	public void tui(){
+//		stage.close();
+//	}
 	public void setUserList(JSONObject message) throws Exception{
 		Platform.runLater(() ->  {
 			List<String> list = new LinkedList<>();
@@ -136,6 +143,7 @@ public class ChatCon implements Initializable {
 				final Scene scene = new Scene(box, width, height);
 				scene.setFill(null);
 
+				//stage = new Stage();
 				final Stage stage = new Stage();
 				stage.initStyle(StageStyle.TRANSPARENT);
 				stage.setScene(scene);
