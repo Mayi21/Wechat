@@ -43,7 +43,6 @@ public class ChatCon implements Initializable {
 	@FXML private Label idLabel;
 	@FXML private ListView userList;
 	@FXML private ListView chatList;
-	@FXML private Label onlineLabel;
 	@FXML private Label currentId;
 	@FXML private ImageView image;
 	public static String current;
@@ -107,10 +106,6 @@ public class ChatCon implements Initializable {
 			messageBox.clear();
 		}
 	}
-	public void setOnlineLabel(String usercount) {
-		Platform.runLater(() -> onlineLabel.setText(usercount));
-	}
-
 	public void setUserList(JSONObject message) throws Exception{
 
 		Platform.runLater(() ->  {
@@ -129,7 +124,7 @@ public class ChatCon implements Initializable {
 			ObservableList<String> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
-			setOnlineLabel(String.valueOf(list.size()));
+			//setOnlineLabel(String.valueOf(list.size()));
 			Text text = null;
 			try {
 				text = new Text(message.getString("Message"));

@@ -1,6 +1,13 @@
 .button{
     -fx-background-color: #7fccf9;
+    -fx-background-radius: 30px;
 }
 .button:hover{
     -fx-background-color: #3cc3f5;
+}
+.text-field{
+    -fx-background-radius: 20px;
+}
+.password-field{
+    -fx-background-radius: 20px;
 }

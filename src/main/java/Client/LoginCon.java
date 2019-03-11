@@ -30,7 +30,6 @@ public class LoginCon implements Initializable {
 	@FXML private TextField port;
 	@FXML private TextField server;
 	@FXML public static ImageView loginImage;
-
 	public ChatCon control;
 	private Scene scene;
 	public static LoginCon loginCon;
@@ -50,7 +49,8 @@ public class LoginCon implements Initializable {
 		 */
 		if (Check.check(id,pa)) {
 			userName = Check.userName;
-			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/chatlist.fxml"));
+			//FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/chatlist.fxml"));
+			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
 			Listener listener = new Listener(server.getText(),port.getText(),userId.getText(),control);
