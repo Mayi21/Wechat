@@ -14,7 +14,8 @@ public class UserInfo {
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT id from wechat where userName=" + username);
+
+			resultSet = statement.executeQuery("SELECT id from wechat where userName='" + username + "'");
 			while (resultSet.next()){
 				id = resultSet.getString("id");
 			}
@@ -31,7 +32,7 @@ public class UserInfo {
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT userName from wechat where id=" + id);
+			resultSet = statement.executeQuery("SELECT userName from wechat where id='" + id + "'");
 			while (resultSet.next()){
 				userName = resultSet.getString("userName");
 			}
