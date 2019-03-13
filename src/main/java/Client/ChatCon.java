@@ -50,13 +50,13 @@ public class ChatCon implements Initializable {
 	@FXML private TextField search;
 	public static String current;
 	//将聊天信息登记到聊天列表中
-	public synchronized void addChat(JSONObject message) throws Exception{
+	public synchronized void addChat(JSONObject message) throws Exception {
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
-				BubbledLabel bubbledLabel =new BubbledLabel();
+				BubbledLabel bubbledLabel = new BubbledLabel();
 				bubbledLabel.setText(message.getString("Message"));
-				bubbledLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,null, null)));
+				bubbledLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_RIGHT);
 				bubbledLabel.setBubbleSpec(BubbleSpec.FACE_RIGHT_CENTER);
@@ -72,7 +72,7 @@ public class ChatCon implements Initializable {
 			protected HBox call() throws Exception {
 				BubbledLabel bubbledLabel = new BubbledLabel();
 				bubbledLabel.setText(message.getString("SendId") + " : " + message.getString("Message"));
-				bubbledLabel.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY,null,null)));
+				bubbledLabel.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_LEFT);
 				bubbledLabel.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
@@ -83,57 +83,35 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
-		if (message.getString("SendId").equals(UserInfo.getId(idLabel.getText()))){
+		if (message.getString("SendId").equals(UserInfo.getId(idLabel.getText()))) {
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
 			thread.start();
-		} else if (message.getString("SendId").equals(UserInfo.getId(currentUserName.getText()))){
+		} else if (message.getString("SendId").equals(UserInfo.getId(currentUserName.getText())) & getFriendStatus(UserInfo.getId(message.getString("SendId")),UserInfo.getId(message.getString("ToId")))) {
 			Thread thread = new Thread(hboxTask);
 			thread.setDaemon(true);
 			thread.start();
 		}
-//		else {
-//			getOtherChat(message);
-//
-//		}
 	}
-	//不是正在聊天的用户发送消息
-//	public void getOtherChat(JSONObject message){
-//		Text text = null;
-//		try {
-//			Text send = new Text(message.getString("SendId"));
-//			text = new Text(message.getString("Message"));
-//			text.setFont(new Font(15));
-//			text.setFill(Color.GREEN);
-//			send.setFill(Color.WHITE);
-//			send.setFont(new Font(20));
-//			VBox box = new VBox();
-//			box.getChildren().addAll(send,text);
-//			box.setStyle("-fx-background-color: black");
-//			final int width = 200;
-//			final int height = 50;
-//			final Scene scene = new Scene(box, width, height);
-//			scene.setFill(null);
-//			Stage stage = new Stage();
-//			//stage.initStyle(StageStyle.TRANSPARENT);
-//			stage.setScene(scene);
-//			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-//			stage.setX(primaryScreenBounds.getWidth() - width - 50);
-//			stage.setY(primaryScreenBounds.getHeight() - height - 50);
-//			stage.show();
-//			Task t = new Task() {
-//				@Override
-//				protected Object call() throws Exception {
-//					Thread.sleep(1000);
-//					Platform.runLater(stage::close);
-//					return "";
-//				}
-//			};
-//			new Thread(t).start();
-//		} catch (Exception e){
-//			e.printStackTrace();
-//		}
-//	}
+	public boolean getFriendStatus(String selfId,String anotherId){
+		Connection connection = MySqlDao.getConnection();
+		boolean status = false;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		try {
+			statement = connection.createStatement();
+			String table = "u" + selfId;
+			resultSet = statement.executeQuery("SELECT * FROM " + table + " where user=" + anotherId);
+			while (resultSet.next()){
+				if (resultSet.getString("status").equals("0")){
+					status = true;
+				}
+			}
+		} catch (Exception e){
+			System.out.println("Class:Server,Methond:getFriendStatus,Message:\n" + e.getMessage());
+		}
+		return status;
+	}
 	//只有当选中聊天用户时，才可以出现如下的菜单按钮
 	public void opMenu(){
 		MenuItem menuItem1 = new MenuItem("删除好友");
