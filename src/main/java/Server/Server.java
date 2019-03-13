@@ -66,7 +66,6 @@ public class Server {
 						String type = inputMessage.getString("MessageType");
 						switch (type) {
 							case "CHAT":
-								sqllog(inputMessage);
 								sendMessage(inputMessage);
 								break;
 							case "UPDATEUSERLIST":
@@ -129,27 +128,7 @@ public class Server {
 				outputStream.flush();
 			}
 		}
-		public static void sqllog(JSONObject message) throws JSONException {
-			Connection connection = MySqlDao.getConnection();
-			PreparedStatement statement = null;
-			String sql = "INSERT INTO log (log,sendid,toid,time) values (?,?,?,?)";
-			String log = message.getString("Message");
-			String sendid = message.getString("SendId");
-			String toid = message.getString("ToId");
-			String time;
-			time = String.valueOf(System.currentTimeMillis());
-			try {
-				statement = connection.prepareStatement(sql);
-				statement.setString(1, log);
-				statement.setString(2, sendid);
-				statement.setString(3, toid);
-				statement.setString(4, time);
-				statement.executeUpdate();
-				System.out.println("sql success");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+
 		public void notificationSelf(JSONObject message){
 			try {
 				String selfId = message.getString("SendId");

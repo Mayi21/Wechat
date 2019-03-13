@@ -95,6 +95,7 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
+
 		if (message.getString("SendId").equals(UserInfo.getId(idLabel.getText()))) {
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
@@ -415,9 +416,6 @@ public class ChatCon implements Initializable {
 							update(afterChangeUserName);
 							idLabel.setText(textArea.getText());
 							//早先是因为用户名需要更改头像，因为头像是和用户id相连接的
-//							String newPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + idLabel.getText() + ".jpg";
-//							File newFile = new File(newPath);
-//							file.renameTo(newFile);
 							textArea.clear();
 							window.close();
 						} else {
