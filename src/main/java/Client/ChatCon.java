@@ -85,11 +85,12 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
+		System.out.println("正在聊天的人：" + currentUserName.getText() + "的id为:" + UserInfo.getId(currentUserName.getText()));
 		if (message.getString("SendId").equals(UserInfo.getId(idLabel.getText()))){
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
 			thread.start();
-		} else if (message.getString("ToId").equals(UserInfo.getId(currentUserName.getText()))){
+		} else if (message.getString("SendId").equals(UserInfo.getId(currentUserName.getText()))){
 			Thread thread = new Thread(hboxTask);
 			thread.setDaemon(true);
 			thread.start();
