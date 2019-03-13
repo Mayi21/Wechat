@@ -19,11 +19,10 @@ public class Temp{
 		PreparedStatement preparedStatement = null;
 		//ResultSet resultSet = null;
 		try {
-			String table1 = "wechat";
-			String username = "dd";
-			String userid = "123456789";
-			String passwd = "1";
-			preparedStatement = connection.prepareStatement("INSERT INTO " + table1 + " values ('" + username + "','" + userid + "','" + passwd + "')");
+			String table = "u123456";
+			String anotherId = "12345";
+			String status = "1";
+			preparedStatement = connection.prepareStatement("update " + table + " set status=" + status + " where user=" + anotherId);
 			preparedStatement.executeUpdate();
 		} catch (Exception e){
 			System.out.println(e.getMessage());

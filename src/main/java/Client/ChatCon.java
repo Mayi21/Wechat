@@ -49,6 +49,7 @@ public class ChatCon implements Initializable {
 	@FXML private Menu opMenu;
 	@FXML private TextField search;
 	public static String current;
+	//将聊天信息登记到聊天列表中
 	public synchronized void addChat(JSONObject message) throws Exception{
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
@@ -97,42 +98,43 @@ public class ChatCon implements Initializable {
 //		}
 	}
 	//不是正在聊天的用户发送消息
-	public void getOtherChat(JSONObject message){
-		Text text = null;
-		try {
-			Text send = new Text(message.getString("SendId"));
-			text = new Text(message.getString("Message"));
-			text.setFont(new Font(15));
-			text.setFill(Color.GREEN);
-			send.setFill(Color.WHITE);
-			send.setFont(new Font(20));
-			VBox box = new VBox();
-			box.getChildren().addAll(send,text);
-			box.setStyle("-fx-background-color: black");
-			final int width = 200;
-			final int height = 50;
-			final Scene scene = new Scene(box, width, height);
-			scene.setFill(null);
-			Stage stage = new Stage();
-			//stage.initStyle(StageStyle.TRANSPARENT);
-			stage.setScene(scene);
-			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-			stage.setX(primaryScreenBounds.getWidth() - width - 50);
-			stage.setY(primaryScreenBounds.getHeight() - height - 50);
-			stage.show();
-			Task t = new Task() {
-				@Override
-				protected Object call() throws Exception {
-					Thread.sleep(1000);
-					Platform.runLater(stage::close);
-					return "";
-				}
-			};
-			new Thread(t).start();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-	}
+//	public void getOtherChat(JSONObject message){
+//		Text text = null;
+//		try {
+//			Text send = new Text(message.getString("SendId"));
+//			text = new Text(message.getString("Message"));
+//			text.setFont(new Font(15));
+//			text.setFill(Color.GREEN);
+//			send.setFill(Color.WHITE);
+//			send.setFont(new Font(20));
+//			VBox box = new VBox();
+//			box.getChildren().addAll(send,text);
+//			box.setStyle("-fx-background-color: black");
+//			final int width = 200;
+//			final int height = 50;
+//			final Scene scene = new Scene(box, width, height);
+//			scene.setFill(null);
+//			Stage stage = new Stage();
+//			//stage.initStyle(StageStyle.TRANSPARENT);
+//			stage.setScene(scene);
+//			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+//			stage.setX(primaryScreenBounds.getWidth() - width - 50);
+//			stage.setY(primaryScreenBounds.getHeight() - height - 50);
+//			stage.show();
+//			Task t = new Task() {
+//				@Override
+//				protected Object call() throws Exception {
+//					Thread.sleep(1000);
+//					Platform.runLater(stage::close);
+//					return "";
+//				}
+//			};
+//			new Thread(t).start();
+//		} catch (Exception e){
+//			e.printStackTrace();
+//		}
+//	}
+	//只有当选中聊天用户时，才可以出现如下的菜单按钮
 	public void opMenu(){
 		MenuItem menuItem1 = new MenuItem("删除好友");
 		menuItem1.setOnAction(new EventHandler<ActionEvent>() {
@@ -147,12 +149,12 @@ public class ChatCon implements Initializable {
 			public void handle(ActionEvent event) {
 				//首先弹出框
 				addFriendToBlackListStage();
-
 			}
 		});
 		opMenu.getItems().clear();
 		opMenu.getItems().addAll(menuItem1,menuItem2);
 	}
+	//添加用户到和名单的stage
 	public void addFriendToBlackListStage(){
 		Stage stage = new Stage();
 		Text text = new Text("请认真想想");
@@ -189,13 +191,15 @@ public class ChatCon implements Initializable {
 		Connection connection = MySqlDao.getConnection();
 		PreparedStatement preparedStatement = null;
 		try {
-			preparedStatement = connection.prepareStatement("UPDATE '" + selfId + "' set status=1 where user='" + anotherId + "'");
+			String table = "u" + selfId;
+			String status = "1";
+			preparedStatement = connection.prepareStatement("UPDATE " + table + " set status=" + status + " where user=" + anotherId);
 			preparedStatement.executeUpdate();
 		} catch (Exception e){
 
 		}
 	}
-	//删除好友的弹框
+	//删除好友的syage
 	public void deleteFriendStage(){
 		Stage stage = new Stage();
 		Text text = new Text("请认真想想");
@@ -246,9 +250,11 @@ public class ChatCon implements Initializable {
 
 		}
 	}
+	//设置当前用户的名字
 	public void setUserLabel(String id){
 		this.idLabel.setText(UserInfo.getUserName(id));
 	}
+	//设置menu里面的头像
 	public void setImageView(String id){
 		String url = "file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
 		Image image = new Image(url);
@@ -327,7 +333,6 @@ public class ChatCon implements Initializable {
 		//使用showAndWait()先处理这个窗口，而如果不处理，main中的那个窗口不能响应
 		window.showAndWait();
 	}
-
 	//修改网名
 	public void display(){
 		String oldPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + idLabel.getText() + ".jpg";
@@ -352,7 +357,7 @@ public class ChatCon implements Initializable {
 					if (afterChangeUserName.length() <= 6 ){
 						//判断数据库是否存在这个用户名
 						if (select(afterChangeUserName)){
-							System.out.println(textArea.getText());
+
 							//向数据库更新用户的username
 							update(afterChangeUserName);
 							idLabel.setText(textArea.getText());
@@ -398,7 +403,6 @@ public class ChatCon implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
 	 //查询修改后的username是否已经在数据库存在了
 	public boolean select(String username){
 		Connection connection = MySqlDao.getConnection();
@@ -420,6 +424,7 @@ public class ChatCon implements Initializable {
 		}
 		return status;
 	}
+	//判断发送框是否为空，并调用Listener的发送消息的方法
 	public void send() throws Exception{
 		String msg = messageBox.getText();
 		if (!messageBox.getText().isEmpty()){
@@ -428,12 +433,12 @@ public class ChatCon implements Initializable {
 		}
 
 	}
+	//设置当前用户的用户列表
 	public void setUserList(JSONObject message) throws Exception{
 		Platform.runLater(() ->  {
 			List<String> list = new LinkedList<>();
 			try {
 				JSONArray jsonArray = message.getJSONArray("List");
-				System.out.println(jsonArray);
 				for (int i = 0;i < jsonArray.length();i++){
 					//if (!jsonArray.getString(i).equals(UserInfo.getId(idLabel.getText()))){
 					list.add(UserInfo.getUserName(jsonArray.getString(i)));
@@ -478,30 +483,38 @@ public class ChatCon implements Initializable {
 			}
 		});
 	}
+	//聊天列表窗口最小化
 	public void xiao(){
 		LoginCon.stageL.setIconified(true);
 	}
+	//聊天列表窗口退出
 	public void tui(){
 		LoginCon.stageL.close();
 	}
+	//得到正在聊天的用户名称
 	public void getToUser(){
 		opMenu();
 		userList.getSelectionModel().selectedItemProperty().addListener(
 				(ChangeListener<String>) (observable, oldValue, newValue) -> {
 					currentUserName.setText(newValue);
 					if (oldValue != null & oldValue != newValue){
-						System.out.println(oldValue + "  " + newValue);
-
 						chatList.getItems().clear();
 						try {
 							sqladd(UserInfo.getId(newValue));
 						}catch (Exception e){
-
+							System.out.println("Class:ChatCon,Method:getToUser" + e.getMessage());
+						}
+					} else if (oldValue == null){
+						try {
+							sqladd(UserInfo.getId(newValue));
+						}catch (Exception e){
+							System.out.println("Class:ChatCon,Method:getToUser" + e.getMessage());
 						}
 					}
 					ChatCon.current = newValue;
 				});
 	}
+	//搜索用户
 	public String searchUser(String searchId,String userId){
 		boolean isUser = false;
 		boolean isFriend = false;
@@ -622,6 +635,7 @@ public class ChatCon implements Initializable {
 		};
 		new Thread(t).start();
 	}
+	//用户聊天的历史记录
 	public void sqladd (String toid) throws Exception {
 		String sendid = UserInfo.getId(idLabel.getText());
 		Connection connection = MySqlDao.getConnection();
@@ -633,7 +647,6 @@ public class ChatCon implements Initializable {
 		String sql = "SELECT log,time FROM log WHERE sendid=" + sendid + " AND toid=" + toid +" ORDER BY time DESC";
 		String sql1 = "SELECT log,time FROM log WHERE sendid=" + toid + " AND toid=" + sendid +" ORDER BY time DESC";
 		resultSet = statement.executeQuery(sql);
-		System.out.println(resultSet);
 		resultSet1 = statement1.executeQuery(sql1);
 		TreeMap<String ,JSONObject> recive = new TreeMap<>();
 		int i = 0;
@@ -670,10 +683,10 @@ public class ChatCon implements Initializable {
 			recive.put(time,jsonObject);
 			o++;
 		}
-
 		recive.descendingMap();
 		int q = 0;
 		Iterator iterator= recive.keySet().iterator();
+		System.out.println(recive.size());
 		while (iterator.hasNext()&&q<6){
 			String key = (String) iterator.next();
 			addChat(recive.get(key));

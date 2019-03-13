@@ -82,21 +82,6 @@ public class Listener implements Runnable {
 		//byte[] bytes =
 		outputStream.write(jsonObject.toString().getBytes());
 	}
-//	//删除好友从聊天列表
-//	public void deleteFriendFromUserList(){
-//		try {
-//			JSONObject message = new JSONObject();
-//			message.put("MessageType","DELETEUSER");
-//			message.put("SendId",id);
-//			message.put("ToId",UserInfo.getId(ChatCon.current));
-//			message.put("Message","");
-//			message.put("List",new JSONArray());
-//			outputStream.write(message.toString().getBytes());
-//		} catch (Exception e){
-//
-//		}
-//
-//	}
 	public static void addFrinedForUserList(String anotherId){
 		try {
 			JSONObject message = new JSONObject();
@@ -109,6 +94,5 @@ public class Listener implements Runnable {
 		} catch (Exception e){
 
 		}
-
 	}
 }
