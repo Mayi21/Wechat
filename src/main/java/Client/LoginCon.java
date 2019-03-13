@@ -34,7 +34,10 @@ public class LoginCon implements Initializable {
 	private Scene scene;
 	public static LoginCon loginCon;
 	public static String userName;
-	public static Stage stage;
+	public static Stage stageL;
+
+
+
 	public LoginCon(){
 		loginCon = this;
 	}
@@ -44,12 +47,10 @@ public class LoginCon implements Initializable {
 	public void login() throws Exception{
 		String id = userId.getText();
 		String pa = passwd.getText();
-		//Stage stage = Login.getP();
-		/**
-		 * TODO 此处应该是 Check.check(id, pa) 由于做演示，让任何人都登陆的上
-		 */
 		if (Check.check(id,pa)) {
 			userName = Check.userName;
+			UserInfo.setId(id);
+			UserInfo.setUsername(userName);
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
@@ -60,7 +61,6 @@ public class LoginCon implements Initializable {
 		} else {
 			dong();
 			passwd.clear();
-
 		}
 	}
 	public void xiao(){
@@ -71,7 +71,8 @@ public class LoginCon implements Initializable {
 	}
 	public void showScene() throws IOException {
 		Platform.runLater(() -> {
-			Stage stage = (Stage) port.getScene().getWindow();
+			stageL = (Stage) port.getScene().getWindow();
+			Stage stage = stageL;
 			stage.setResizable(true);
 			stage.setOnCloseRequest((WindowEvent e) -> {
 				Platform.exit();
@@ -120,7 +121,6 @@ public class LoginCon implements Initializable {
 		//执行动画
 		pathTransition.play();
 	}
-
 	public String getId(){
 		return userId.getText();
 	}
@@ -130,5 +130,4 @@ public class LoginCon implements Initializable {
 	public String getPort(){
 		return port.getText();
 	}
-
 }

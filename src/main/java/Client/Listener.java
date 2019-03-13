@@ -1,20 +1,17 @@
 package Client;
 
-import io.netty.handler.codec.json.JsonObjectDecoder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class Listener implements Runnable {
 	private String server;
 	private String port;
+	//这个就是登录者的ID
 	private static String id;
 	private static String currentId;
 	private Socket socket;
@@ -66,7 +63,7 @@ public class Listener implements Runnable {
 	}
 	public static void send(String msg) throws Exception{
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("ToId",ChatCon.current);
+		jsonObject.put("ToId",UserInfo.getId(ChatCon.current));
 		jsonObject.put("List",new JSONArray());
 		jsonObject.put("MessageType","CHAT");
 		jsonObject.put("Message",msg);
