@@ -1,17 +1,23 @@
 package Server;
 
+import Client.UserInfo;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import util.MySqlDao;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class Server {
-	private static ArrayList<String> list = new ArrayList<>();
+	private static LinkedList<String> list = new LinkedList<>();
 	private static HashMap<String, OutputStream> map = new HashMap<>();
 	public static HashSet<OutputStream> set = new HashSet<>();
 	public static void main(String[] args) throws Exception {
@@ -40,21 +46,17 @@ public class Server {
 				inputStream = socket.getInputStream();
 				outputStream = socket.getOutputStream();
 				JSONObject jsonObject = get(inputStream);
-				if (UserList.getList() == null) {
-					UserList.setList(new ArrayList<>());
-				}
 				id = jsonObject.getString("SendId");
-				list = UserList.getList();
-				list.add(id);
+				//拿到该用户的好友列表
+				list = UserList.getFriendList(id);
 				map.put(id, outputStream);
 				set.add(outputStream);
 				jsonObject.put("List",new JSONArray(list));
 				jsonObject.put("MessageType","NOTIFICATION");
-				jsonObject.put("Message","您的好友" + id + "已经上线!");
+				jsonObject.put("Message","您的好友" + UserInfo.getUserName(id) + "已经上线!");
 				jsonObject.put("SendId","");
 				jsonObject.put("ToId","");
 				notificationAll(jsonObject);
-				UserList.setList(list);
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
 					JSONObject inputMessage = get(socket.getInputStream());
@@ -66,10 +68,12 @@ public class Server {
 								sendMessage(inputMessage);
 								break;
 							case "DISCONNECT":
-								/**
-								 * TODO 应该是注销用户
-								 */
 								break;
+							case "UPDATEUSERLIST":
+								//要向自身发送更新消息
+								notificationSelf(inputMessage);
+								break;
+
 							default:
 						}
 					} else {
@@ -109,17 +113,69 @@ public class Server {
 		}
 		private void sendMessage (JSONObject message) throws Exception {
 			String toId = message.getString("ToId");
-			if (map.containsKey(toId)) {
+			String sendId = message.getString("SendId");
+			if (map.containsKey(toId) && getFriendStatus(sendId,toId)) {
 				OutputStream o = map.get(toId);
 				o.write(message.toString().getBytes());
 				o.flush();
 			}
 		}
+		private boolean getFriendStatus(String selfId,String anotherId){
+			Connection connection = MySqlDao.getConnection();
+			boolean status = false;
+			Statement statement = null;
+			ResultSet resultSet = null;
+			try {
+				statement = connection.createStatement();
+				resultSet = statement.executeQuery("SELECT * FROM '" + selfId + "' where user='" + anotherId + "'");
+				while (resultSet.next()){
+					if (resultSet.getString("status").equals("0")){
+						status = true;
+					}
+				}
+			} catch (Exception e){
+
+			}
+			return status;
+		}
 		private void notificationAll (JSONObject message) throws Exception {
-			for (OutputStream o : set) {
-				byte[] bytes = message.toString().getBytes();
-				o.write(bytes);
-				o.flush();
+			LinkedList<String> linkedList = UserList.getFriendList(message.getString("SendId"));
+			for (String s: linkedList){
+				if (map.containsKey(s)){
+					OutputStream outputStream = map.get(s);
+					outputStream.write(message.toString().getBytes());
+					outputStream.flush();
+				}
+			}
+		}
+		public void notificationSelf(JSONObject message){
+			try {
+				String selfId = message.getString("SendId");
+				String anoherId = message.getString("ToId");
+				if (map.containsKey(anoherId)){
+					LinkedList<String> linkedList1 = UserList.getFriendList(anoherId);
+					JSONObject newMessage1 = new JSONObject();
+					newMessage1.put("SendId","");
+					newMessage1.put("ToId","");
+					newMessage1.put("MessageType","NOTIFICATION");
+					newMessage1.put("List",new JSONArray(linkedList1));
+					newMessage1.put("Message","");
+					OutputStream outputStream1 = map.get(anoherId);
+					outputStream1.write(newMessage1.toString().getBytes());
+					outputStream1.flush();
+				}
+				LinkedList<String> linkedList = UserList.getFriendList(selfId);
+				JSONObject newMessage = new JSONObject();
+				newMessage.put("SendId","");
+				newMessage.put("ToId","");
+				newMessage.put("MessageType","NOTIFICATION");
+				newMessage.put("List",new JSONArray(linkedList));
+				newMessage.put("Message","");
+				OutputStream outputStream = map.get(selfId);
+				outputStream.write(newMessage.toString().getBytes());
+				outputStream.flush();
+			} catch (Exception e){
+
 			}
 		}
 

@@ -39,7 +39,7 @@ public class Listener implements Runnable {
 		try {
 			connect();
 			while (socket.isConnected()){
-				byte[] bytes = new byte[1024];
+				byte[] bytes = new byte[4096];
 				int len = inputStream.read(bytes);
 				JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
 				String message = jsonObject.getString("Message");
@@ -79,7 +79,36 @@ public class Listener implements Runnable {
 		jsonObject.put("MessageType","STATUS:ONLINE");
 		jsonObject.put("ToId","");
 		jsonObject.put("List",new JSONArray());
-		byte[] bytes = jsonObject.toString().getBytes();
-		outputStream.write(bytes);
+		//byte[] bytes =
+		outputStream.write(jsonObject.toString().getBytes());
+	}
+//	//删除好友从聊天列表
+//	public void deleteFriendFromUserList(){
+//		try {
+//			JSONObject message = new JSONObject();
+//			message.put("MessageType","DELETEUSER");
+//			message.put("SendId",id);
+//			message.put("ToId",UserInfo.getId(ChatCon.current));
+//			message.put("Message","");
+//			message.put("List",new JSONArray());
+//			outputStream.write(message.toString().getBytes());
+//		} catch (Exception e){
+//
+//		}
+//
+//	}
+	public static void addFrinedForUserList(){
+		try {
+			JSONObject message = new JSONObject();
+			message.put("MessageType","UPDATEUSERLIST");
+			message.put("SendId",id);
+			message.put("ToId",UserInfo.getId(ChatCon.current));
+			message.put("Message","");
+			message.put("List",new JSONArray());
+			outputStream.write(message.toString().getBytes());
+		} catch (Exception e){
+
+		}
+
 	}
 }

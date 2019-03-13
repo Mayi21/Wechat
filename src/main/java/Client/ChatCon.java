@@ -10,11 +10,9 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -30,7 +28,6 @@ import javafx.stage.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import util.MySqlDao;
-
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
@@ -41,6 +38,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * @author May
+ */
 public class ChatCon implements Initializable {
 	@FXML private TextArea messageBox;
 	@FXML private Button messageSendButton;
@@ -85,7 +85,6 @@ public class ChatCon implements Initializable {
 		hboxTask.setOnSucceeded(event -> {
 			chatList.getItems().add(hboxTask.getValue());
 		});
-		System.out.println("正在聊天的人：" + currentUserName.getText() + "的id为:" + UserInfo.getId(currentUserName.getText()));
 		if (message.getString("SendId").equals(UserInfo.getId(idLabel.getText()))){
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
@@ -142,24 +141,112 @@ public class ChatCon implements Initializable {
 		menuItem1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				/**
-				 * TODO 删除好友，对接数据库
-				 */
+				deleteFriendStage();
 			}
 		});
 		MenuItem menuItem2 = new MenuItem("加入黑名单");
 		menuItem2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				/**
-				 * TODO 加入黑名单
-				 */
+				//首先弹出框
+				addFriendToBlackListStage();
+
 			}
 		});
 		opMenu.getItems().clear();
 		opMenu.getItems().addAll(menuItem1,menuItem2);
 	}
+	public void addFriendToBlackListStage(){
+		Stage stage = new Stage();
+		Text text = new Text("请认真想想");
+		VBox vBox = new VBox();
+		HBox hBox = new HBox();
+		vBox.getChildren().addAll(text,hBox);
+		Button yes = new Button("加入");
+		yes.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				//数据库
+				addFriendToBlackListForDataBase();
+				stage.close();
+			}
+		});
+		Button no = new Button("我再想想");
+		no.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				stage.close();
+			}
+		});
+		hBox.getChildren().addAll(yes,no);
+		Scene scene = new Scene(vBox);
+		stage.setHeight(100);
+		stage.setWidth(100);
+		stage.setScene(scene);
+		stage.showAndWait();
+	}
+	//把好友加入到黑名单的数据库操作
+	public void addFriendToBlackListForDataBase(){
+		String selfId = UserInfo.getId(idLabel.getText());
+		String anotherId = UserInfo.getId(currentUserName.getText());
+		Connection connection = MySqlDao.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			preparedStatement = connection.prepareStatement("UPDATE '" + selfId + "' set status=1 where user='" + anotherId + "'");
+			preparedStatement.executeUpdate();
+		} catch (Exception e){
 
+		}
+	}
+	//删除好友的弹框
+	public void deleteFriendStage(){
+		Stage stage = new Stage();
+		Text text = new Text("请认真想想");
+		VBox vBox = new VBox();
+		HBox hBox = new HBox();
+		vBox.getChildren().addAll(text,hBox);
+		Button yes = new Button("Delete");
+		yes.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				//数据库
+				deleteFriend();
+				//用户列表
+				Listener.addFrinedForUserList();
+				stage.close();
+			}
+		});
+		Button no = new Button("No");
+		no.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				stage.close();
+			}
+		});
+		hBox.getChildren().addAll(yes,no);
+		Scene scene = new Scene(vBox);
+		stage.setHeight(100);
+		stage.setWidth(100);
+		stage.setScene(scene);
+		stage.showAndWait();
+	}
+	//删除好友从数据库
+	public void deleteFriend(){
+		//删除好友在两个人的数据库中
+		String selfId = UserInfo.getId(idLabel.getText());
+		String anotherId = UserInfo.getId(currentUserName.getText());
+		Connection connection = MySqlDao.getConnection();
+		PreparedStatement preparedStatement1 = null;
+		PreparedStatement preparedStatement2 = null;
+		try {
+			preparedStatement1 = connection.prepareStatement("DELETE from '" + selfId + "' where user='" + anotherId + "'" );
+			preparedStatement2 = connection.prepareStatement("DELETE FROM '" + anotherId + "' where user='" + selfId + "'");
+			preparedStatement1.executeUpdate();
+			preparedStatement2.executeUpdate();
+		}catch (Exception e){
+
+		}
+	}
 	public void setUserLabel(String id){
 		this.idLabel.setText(UserInfo.getUserName(id));
 	}
@@ -307,7 +394,7 @@ public class ChatCon implements Initializable {
 		Connection connection = MySqlDao.getConnection();
 		PreparedStatement preparedStatement = null;
 		try {
-			preparedStatement = connection.prepareStatement("UPDATE SET username=" + username + "WHERE username=" + idLabel.getText());
+			preparedStatement = connection.prepareStatement("UPDATE SET username='" + username + "'WHERE username='" + idLabel.getText() + "'");
 			preparedStatement.executeUpdate();
 		} catch (Exception e){
 			e.printStackTrace();
@@ -350,9 +437,9 @@ public class ChatCon implements Initializable {
 			try {
 				JSONArray jsonArray = message.getJSONArray("List");
 				for (int i = 0;i < jsonArray.length();i++){
-					if (!jsonArray.getString(i).equals(UserInfo.getId(idLabel.getText()))){
-						list.add(UserInfo.getUserName(jsonArray.getString(i)));
-					}
+					//if (!jsonArray.getString(i).equals(UserInfo.getId(idLabel.getText()))){
+					list.add(UserInfo.getUserName(jsonArray.getString(i)));
+					//}
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -412,6 +499,120 @@ public class ChatCon implements Initializable {
 					ChatCon.current = newValue;
 				});
 	}
+	public String searchUser(String searchId,String userId){
+		boolean isUser = false;
+		boolean isFriend = false;
+		String username = null;
+		Connection connection = MySqlDao.getConnection();
+		ResultSet resultSet = null;
+		Statement statement = null;
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT id,userName from wechat");
+			while (resultSet.next()){
+				if (resultSet.getString("id").equals(searchId)){
+					isUser = true;
+					username = resultSet.getString("userName");
+					break;
+				}
+			}
+			if (isUser){
+				ResultSet newResultSet = statement.executeQuery("select * from '" + userId + "'");
+				while (newResultSet.next()){
+					//说明用户已经有这个好友了
+					if (resultSet.getString("user").equals(searchId)){
+						isFriend = true;
+						break;
+					}
+				}
+			} else {
+				return "-1";
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		if (isFriend & isUser){
+			return "1";
+		}
+		if (isUser){
+			return "0";
+		}
+		return null;
+	}
+	//添加B到当前的用户好友列表中,添加当前用户到B的好友列表中
+	public void addFriend(String id){
+		Stage stage = new Stage();
+		Text text = new Text(UserInfo.getUserName(id));
+		Text text1 = new Text(id);
+		Button button = new Button("加好友");
+		button.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				//向本用户的好友列表中添加此用户
+				Connection connection = MySqlDao.getConnection();
+				PreparedStatement preparedStatement = null;
+				PreparedStatement preparedStatement1 = null;
+				try {
+					preparedStatement1 = connection.prepareStatement("INSERT INTO'" + id + "' values ('" + UserInfo.getId(idLabel.getText() + "','" + idLabel.getText() + "'"));
+					preparedStatement1.executeUpdate();
+					preparedStatement = connection.prepareStatement("INSERT INTO '" + UserInfo.getId(idLabel.getText()) + "' values ('" + id + "','" + UserInfo.getUserName(id) + "'");
+					preparedStatement.executeUpdate();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+				stage.close();
+			}
+		});
+		HBox hBox = new HBox();
+		hBox.getChildren().addAll(text,text1,button);
+		Scene scene = new Scene(hBox,200,75);
+		stage.setScene(scene);
+		stage.showAndWait();
+	}
+	//搜索好友已经是你好友的弹框
+	public void searchThisUserIsYourFriend(){
+		Stage stage = new Stage();
+		HBox hBox = new HBox();
+		Text text = new Text("此人已是你的好友");
+		text.setFill(Color.RED);
+		hBox.getChildren().add(text);
+		Scene scene = new Scene(hBox);
+		stage.setWidth(100);
+		stage.setHeight(50);
+		stage.setScene(scene);
+		stage.show();
+		Task t = new Task() {
+			@Override
+			protected Object call() throws Exception {
+				Thread.sleep(1000);
+				Platform.runLater(stage::close);
+				return "";
+			}
+		};
+		new Thread(t).start();
+	}
+	//搜索好友时此人不存在的弹框
+	public void searchNoThisUserStage(){
+		Stage stage = new Stage();
+		HBox hBox = new HBox();
+		Text text = new Text("此人不在");
+		text.setFill(Color.RED);
+		hBox.getChildren().add(text);
+		Scene scene = new Scene(hBox);
+		stage.setWidth(100);
+		stage.setHeight(50);
+		stage.setScene(scene);
+		stage.show();
+		Task t = new Task() {
+			@Override
+			protected Object call() throws Exception {
+				Thread.sleep(1000);
+				Platform.runLater(stage::close);
+				return "";
+			}
+		};
+		new Thread(t).start();
+	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		messageBox.addEventFilter(KeyEvent.KEY_PRESSED,ke ->{
@@ -443,13 +644,26 @@ public class ChatCon implements Initializable {
 			public void handle(KeyEvent event) {
 				if (event.getCode().equals(KeyCode.ENTER)){
 					String searchCount = search.getText();
-					/**
-					 * TODO 寻找这个用户名称在数据库中
-					 */
-
+					if (!searchCount.isEmpty()){
+						String s = searchUser(searchCount,UserInfo.getId(idLabel.getText()));
+						if (s.equals("0")){
+							//表示此人不是你的好友,进行添加好友
+							//数据库操作，将两人添加到对方的数据库
+							addFriend(searchCount);
+							//当前用户的userlist的操作
+							Listener.addFrinedForUserList();
+						} else if (s.equals("-1")){
+							//表示此人不存在
+							searchNoThisUserStage();
+						} else {
+							//表示此人是你的好友
+							searchThisUserIsYourFriend();
+						}
+					}else {
+						//不做反应
+					}
 				}
 			}
 		});
-
 	}
 }
