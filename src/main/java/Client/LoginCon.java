@@ -49,8 +49,7 @@ public class LoginCon implements Initializable {
 		String pa = passwd.getText();
 		if (Check.check(id,pa)) {
 			userName = Check.userName;
-			UserInfo.setId(id);
-			UserInfo.setUsername(userName);
+
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
