@@ -16,14 +16,12 @@ import java.sql.Statement;
 public class Temp{
 	public static void main(String[] args) throws Exception {
 		Connection connection = MySqlDao.getConnection();
-		ResultSet resultSet = null;
+		PreparedStatement preparedStatement = null;
 		Statement statement = null;
 		try {
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT * FROM wechat");
-			while (resultSet.next()){
-				System.out.println(resultSet.getString("id"));
-			}
+			String table1 = "u123456";
+
+			//preparedStatement = connection.prepareStatement("INSERT INTO " + table1 + " values (" + UserInfo.getId(idLabel.getText()) + "," + idLabel.getText() + "," + status + ")");
 		}catch (Exception e){
 			e.printStackTrace();
 		}

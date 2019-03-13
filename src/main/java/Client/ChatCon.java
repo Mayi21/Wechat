@@ -297,8 +297,9 @@ public class ChatCon implements Initializable {
 		try {
 			String table1 = "u" + selfId;
 			String table2 = "u" + anotherId;
-			preparedStatement1 = connection.prepareStatement("DELETE from " + table1 + " where user='" + anotherId + "'" );
-			preparedStatement2 = connection.prepareStatement("DELETE FROM " + table2 + " where user='" + selfId + "'");
+			System.out.println();
+			preparedStatement1 = connection.prepareStatement("DELETE from " + table1 + " where user=" + anotherId);
+			preparedStatement2 = connection.prepareStatement("DELETE FROM " + table2 + " where user=" + selfId);
 			preparedStatement1.executeUpdate();
 			preparedStatement2.executeUpdate();
 		}catch (Exception e){
@@ -625,9 +626,9 @@ public class ChatCon implements Initializable {
 					String table1 = "u" + id;
 					String table2 = "u" + UserInfo.getId(idLabel.getText());
 					String status = "0";
-					preparedStatement1 = connection.prepareStatement("INSERT INTO " + table1 + " values ('" + UserInfo.getId(idLabel.getText()) + "','" + idLabel.getText() + "','" + status + "')");
+					preparedStatement1 = connection.prepareStatement("INSERT INTO " + table1 + " values (" + UserInfo.getId(idLabel.getText()) + ","  + status + ")");
 					preparedStatement1.executeUpdate();
-					preparedStatement = connection.prepareStatement("INSERT INTO " + table2 + " values ('" + id + "','" + UserInfo.getUserName(id) + "','" + status + "')");
+					preparedStatement = connection.prepareStatement("INSERT INTO " + table2 + " values (" + id + "," + status + ")");
 					preparedStatement.executeUpdate();
 				}catch (Exception e){
 					e.printStackTrace();
