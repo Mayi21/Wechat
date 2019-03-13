@@ -17,7 +17,9 @@ public class UserList {
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT user from '" + id  + "'");
+			String table = "u" + id;
+			System.out.println(table);
+			resultSet = statement.executeQuery("SELECT user from " + table);
 			while (resultSet.next()){
 				linkedList.add(resultSet.getString("user"));
 			}

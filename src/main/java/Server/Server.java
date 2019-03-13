@@ -19,7 +19,6 @@ import java.util.LinkedList;
 public class Server {
 	private static LinkedList<String> list = new LinkedList<>();
 	private static HashMap<String, OutputStream> map = new HashMap<>();
-	public static HashSet<OutputStream> set = new HashSet<>();
 	public static void main(String[] args) throws Exception {
 		ServerSocket serverSocket = new ServerSocket(8888);
 		try {
@@ -47,15 +46,13 @@ public class Server {
 				outputStream = socket.getOutputStream();
 				JSONObject jsonObject = get(inputStream);
 				id = jsonObject.getString("SendId");
-				//拿到该用户的好友列表
 				list = UserList.getFriendList(id);
 				map.put(id, outputStream);
-				set.add(outputStream);
 				jsonObject.put("List",new JSONArray(list));
 				jsonObject.put("MessageType","NOTIFICATION");
 				jsonObject.put("Message","您的好友" + UserInfo.getUserName(id) + "已经上线!");
-				jsonObject.put("SendId","");
-				jsonObject.put("ToId","");
+				jsonObject.put("SendId",id);
+				jsonObject.put("ToId","server");
 				notificationAll(jsonObject);
 				while (socket.isConnected()) {
 					System.out.println(Thread.currentThread());
@@ -139,7 +136,8 @@ public class Server {
 			return status;
 		}
 		private void notificationAll (JSONObject message) throws Exception {
-			LinkedList<String> linkedList = UserList.getFriendList(message.getString("SendId"));
+			String sendId = message.getString("SendId");
+			LinkedList<String> linkedList = UserList.getFriendList(sendId);
 			for (String s: linkedList){
 				if (map.containsKey(s)){
 					OutputStream outputStream = map.get(s);
