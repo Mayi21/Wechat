@@ -19,10 +19,9 @@ public class Temp{
 		PreparedStatement preparedStatement = null;
 		//ResultSet resultSet = null;
 		try {
-			String table = "u123456";
-			String anotherId = "12345";
-			String status = "1";
-			preparedStatement = connection.prepareStatement("update " + table + " set status=" + status + " where user=" + anotherId);
+			String username = "123张三";
+			String id = "123456";
+			preparedStatement = connection.prepareStatement("UPDATE wechat SET userName='" + username + "' WHERE id=" + id);
 			preparedStatement.executeUpdate();
 		} catch (Exception e){
 			System.out.println(e.getMessage());

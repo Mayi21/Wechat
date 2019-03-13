@@ -54,13 +54,19 @@ public class ChatCon implements Initializable {
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
+				String id = message.getString("SendId");
+				String path = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
+				Image image = new Image("file:" + path);
+				ImageView imageView = new ImageView(image);
+				imageView.setFitHeight(30);
+				imageView.setFitWidth(30);
 				BubbledLabel bubbledLabel = new BubbledLabel();
 				bubbledLabel.setText(message.getString("Message"));
 				bubbledLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_RIGHT);
 				bubbledLabel.setBubbleSpec(BubbleSpec.FACE_RIGHT_CENTER);
-				x.getChildren().addAll(bubbledLabel);
+				x.getChildren().addAll(bubbledLabel,imageView);
 				return x;
 			}
 		};
@@ -70,13 +76,19 @@ public class ChatCon implements Initializable {
 		Task<HBox> hboxTask = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
+				String id = message.getString("SendId");
+				String path = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
+				Image image = new Image("file:" + path);
+				ImageView imageView = new ImageView(image);
+				imageView.setFitHeight(30);
+				imageView.setFitWidth(30);
 				BubbledLabel bubbledLabel = new BubbledLabel();
-				bubbledLabel.setText(message.getString("SendId") + " : " + message.getString("Message"));
+				bubbledLabel.setText(message.getString("Message"));
 				bubbledLabel.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_LEFT);
 				bubbledLabel.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
-				x.getChildren().add(bubbledLabel);
+				x.getChildren().addAll(imageView,bubbledLabel);
 				return x;
 			}
 		};
@@ -97,6 +109,7 @@ public class ChatCon implements Initializable {
 			}
 		}
 	}
+	//得到用户的好友列表中anotherId的状态
 	public boolean getFriendStatus(String selfId,String anotherId){
 		Connection connection = MySqlDao.getConnection();
 		boolean status = false;
@@ -125,16 +138,61 @@ public class ChatCon implements Initializable {
 				deleteFriendStage();
 			}
 		});
-		MenuItem menuItem2 = new MenuItem("加入黑名单");
-		menuItem2.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				//首先弹出框
-				addFriendToBlackListStage();
-			}
-		});
+		MenuItem menuItem2 = new MenuItem();
+		String selfId = UserInfo.getId(idLabel.getText());
+		String anotherId = UserInfo.getId(currentUserName.getText());
+		if (getFriendStatus(selfId,anotherId)){
+			menuItem2 = new MenuItem("加入黑名单");
+			menuItem2.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					//首先弹出框
+					addFriendToBlackListStage();
+				}
+			});
+		} else {
+			menuItem2 = new MenuItem("移除黑名单");
+			menuItem2.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					//首先弹出框
+					removeFriendToBlackListStage();
+				}
+			});
+		}
+
 		opMenu.getItems().clear();
 		opMenu.getItems().addAll(menuItem1,menuItem2);
+	}
+	//从黑名单移除用户
+	public void removeFriendToBlackListStage(){
+		Stage stage = new Stage();
+		Text text = new Text("确认移除");
+		VBox vBox = new VBox();
+		HBox hBox = new HBox();
+		vBox.getChildren().addAll(text,hBox);
+		Button yes = new Button("移除");
+		yes.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				//数据库
+				removeFriendToBlackListForDataBase();
+				stage.close();
+			}
+		});
+		Button no = new Button("我再想想");
+		no.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				stage.close();
+			}
+		});
+		hBox.getChildren().addAll(yes,no);
+		Scene scene = new Scene(vBox);
+		stage.setHeight(100);
+		stage.setWidth(100);
+		stage.setScene(scene);
+		stage.showAndWait();
 	}
 	//添加用户到和名单的stage
 	public void addFriendToBlackListStage(){
@@ -165,6 +223,20 @@ public class ChatCon implements Initializable {
 		stage.setWidth(100);
 		stage.setScene(scene);
 		stage.showAndWait();
+	}
+	public void removeFriendToBlackListForDataBase(){
+		String selfId = UserInfo.getId(idLabel.getText());
+		String anotherId = UserInfo.getId(currentUserName.getText());
+		Connection connection = MySqlDao.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String table = "u" + selfId;
+			String status = "0";
+			preparedStatement = connection.prepareStatement("UPDATE " + table + " set status=" + status + " where user=" + anotherId);
+			preparedStatement.executeUpdate();
+		} catch (Exception e){
+
+		}
 	}
 	//把好友加入到黑名单的数据库操作
 	public void addFriendToBlackListForDataBase(){
@@ -339,7 +411,6 @@ public class ChatCon implements Initializable {
 					if (afterChangeUserName.length() <= 6 ){
 						//判断数据库是否存在这个用户名
 						if (select(afterChangeUserName)){
-
 							//向数据库更新用户的username
 							update(afterChangeUserName);
 							idLabel.setText(textArea.getText());
@@ -379,7 +450,8 @@ public class ChatCon implements Initializable {
 		Connection connection = MySqlDao.getConnection();
 		PreparedStatement preparedStatement = null;
 		try {
-			preparedStatement = connection.prepareStatement("UPDATE SET username='" + username + "'WHERE username='" + idLabel.getText() + "'");
+			String id = UserInfo.getId(idLabel.getText());
+			preparedStatement = connection.prepareStatement("UPDATE wechat SET userName='" + username + "' WHERE id=" + id);
 			preparedStatement.executeUpdate();
 		} catch (Exception e){
 			e.printStackTrace();

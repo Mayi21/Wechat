@@ -49,7 +49,6 @@ public class LoginCon implements Initializable {
 		String pa = passwd.getText();
 		if (Check.check(id,pa)) {
 			userName = Check.userName;
-
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
@@ -94,7 +93,7 @@ public class LoginCon implements Initializable {
 		//创建一个路径对象
 		Path path = new Path();
 		double x=loginButton.getLayoutX() - 100;
-		double y=loginButton.getLayoutY() - 85;
+		double y=loginButton.getLayoutY() - 87;
 		//从哪个位置开始动画，一般来说给组件的默认位置就行
 		path.getElements().add(new MoveTo(x, y));
 		//添加一个向左移动的路径

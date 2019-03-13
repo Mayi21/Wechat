@@ -66,8 +66,8 @@ public class Server {
 						String type = inputMessage.getString("MessageType");
 						switch (type) {
 							case "CHAT":
-								sendMessage(inputMessage);
 								sqllog(inputMessage);
+								sendMessage(inputMessage);
 								break;
 							case "UPDATEUSERLIST":
 								//要向自身发送更新消息
