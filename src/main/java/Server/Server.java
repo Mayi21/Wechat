@@ -114,31 +114,12 @@ public class Server {
 		private void sendMessage (JSONObject message) throws Exception {
 			String toId = message.getString("ToId");
 			String sendId = message.getString("SendId");
-			if (map.containsKey(toId) && getFriendStatus(sendId,toId)) {
+			if (map.containsKey(toId)) {
 				System.out.println("sendMessage");
 				OutputStream o = map.get(toId);
 				o.write(message.toString().getBytes());
 				o.flush();
 			}
-		}
-		private boolean getFriendStatus(String selfId,String anotherId){
-			Connection connection = MySqlDao.getConnection();
-			boolean status = false;
-			Statement statement = null;
-			ResultSet resultSet = null;
-			try {
-				statement = connection.createStatement();
-				String table = "u" + selfId;
-				resultSet = statement.executeQuery("SELECT * FROM " + table + " where user=" + anotherId);
-				while (resultSet.next()){
-					if (resultSet.getString("status").equals("0")){
-						status = true;
-					}
-				}
-			} catch (Exception e){
-				System.out.println("Class:Server,Methond:getFriendStatus,Message:\n" + e.getMessage());
-			}
-			return status;
 		}
 		private void notificationAll (JSONObject message) throws Exception {
 			String sendId = message.getString("SendId");

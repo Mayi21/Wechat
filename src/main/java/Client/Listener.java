@@ -2,11 +2,16 @@ package Client;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import util.MySqlDao;
+
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class Listener implements Runnable {
 	private String server;
@@ -43,7 +48,7 @@ public class Listener implements Runnable {
 				int len = inputStream.read(bytes);
 				JSONObject jsonObject = new JSONObject(new String(bytes,0,len));
 				String message = jsonObject.getString("Message");
-				 if (message != null & jsonObject.getString("ToId") != null){
+				 if (message != null & jsonObject.getString("ToId") != null & getFriendStatus(UserInfo.getId(jsonObject.getString("SendId")),UserInfo.getId(jsonObject.getString("ToId")))){
 				 	switch (jsonObject.getString("MessageType")){
 						case "CHAT":
 							control.addChat(jsonObject);
@@ -60,6 +65,25 @@ public class Listener implements Runnable {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+	public boolean getFriendStatus(String selfId,String anotherId){
+		Connection connection = MySqlDao.getConnection();
+		boolean status = false;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		try {
+			statement = connection.createStatement();
+			String table = "u" + selfId;
+			resultSet = statement.executeQuery("SELECT * FROM " + table + " where user=" + anotherId);
+			while (resultSet.next()){
+				if (resultSet.getString("status").equals("0")){
+					status = true;
+				}
+			}
+		} catch (Exception e){
+			System.out.println("Class:Server,Methond:getFriendStatus,Message:\n" + e.getMessage());
+		}
+		return status;
 	}
 	public static void send(String msg) throws Exception{
 		JSONObject jsonObject = new JSONObject();
