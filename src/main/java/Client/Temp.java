@@ -16,16 +16,16 @@ import java.sql.Statement;
 public class Temp{
 	public static void main(String[] args) throws Exception {
 		Connection connection = MySqlDao.getConnection();
-		PreparedStatement preparedStatement = null;
-		//ResultSet resultSet = null;
+		ResultSet resultSet = null;
+		Statement statement = null;
 		try {
-			String username = "123张三";
-			String id = "123456";
-			preparedStatement = connection.prepareStatement("UPDATE wechat SET userName='" + username + "' WHERE id=" + id);
-			preparedStatement.executeUpdate();
-		} catch (Exception e){
-			System.out.println(e.getMessage());
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT * FROM wechat");
+			while (resultSet.next()){
+				System.out.println(resultSet.getString("id"));
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
-
 }
