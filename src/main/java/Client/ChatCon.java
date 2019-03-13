@@ -501,14 +501,14 @@ public class ChatCon implements Initializable {
 						chatList.getItems().clear();
 						try {
 							sqladd(UserInfo.getId(newValue));
-						}catch (Exception e){
-							System.out.println("Class:ChatCon,Method:getToUser" + e.getMessage());
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-					} else if (oldValue == null){
+					} else {
 						try {
 							sqladd(UserInfo.getId(newValue));
-						}catch (Exception e){
-							System.out.println("Class:ChatCon,Method:getToUser" + e.getMessage());
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					ChatCon.current = newValue;
