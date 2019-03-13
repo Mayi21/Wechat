@@ -87,10 +87,14 @@ public class ChatCon implements Initializable {
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
 			thread.start();
-		} else if (message.getString("SendId").equals(UserInfo.getId(currentUserName.getText())) & getFriendStatus(UserInfo.getId(message.getString("SendId")),UserInfo.getId(message.getString("ToId")))) {
-			Thread thread = new Thread(hboxTask);
-			thread.setDaemon(true);
-			thread.start();
+		} else if (message.getString("SendId").equals(UserInfo.getId(currentUserName.getText()))) {
+			String selfId = message.getString("SendId");
+			String anotherId = message.getString("ToId");
+			if (getFriendStatus(anotherId,selfId)){
+				Thread thread = new Thread(hboxTask);
+				thread.setDaemon(true);
+				thread.start();
+			}
 		}
 	}
 	public boolean getFriendStatus(String selfId,String anotherId){
