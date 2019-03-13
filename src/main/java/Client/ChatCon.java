@@ -93,10 +93,11 @@ public class ChatCon implements Initializable {
 			Thread thread = new Thread(hboxTask);
 			thread.setDaemon(true);
 			thread.start();
-		} else {
-			getOtherChat(message);
-
 		}
+//		else {
+//			getOtherChat(message);
+//
+//		}
 	}
 	//不是正在聊天的用户发送消息
 	public void getOtherChat(JSONObject message){
@@ -115,7 +116,7 @@ public class ChatCon implements Initializable {
 			final int height = 50;
 			final Scene scene = new Scene(box, width, height);
 			scene.setFill(null);
-			final Stage stage = new Stage();
+			Stage stage = new Stage();
 			//stage.initStyle(StageStyle.TRANSPARENT);
 			stage.setScene(scene);
 			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
