@@ -9,24 +9,24 @@ import javafx.stage.StageStyle;
 import util.MySqlDao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class Temp{
 	public static void main(String[] args) throws Exception {
 		Connection connection = MySqlDao.getConnection();
-		Statement statement = null;
-		ResultSet resultSet = null;
+		PreparedStatement preparedStatement = null;
+		//ResultSet resultSet = null;
 		try {
-			statement = connection.createStatement();
-			String s = "u123456";
-			String sql = "select * from " + s;
-			resultSet = statement.executeQuery(sql);
-			while (resultSet.next()){
-				System.out.println(resultSet.getString("user") + "  11");
-			}
+			String table1 = "wechat";
+			String username = "dd";
+			String userid = "123456789";
+			String passwd = "1";
+			preparedStatement = connection.prepareStatement("INSERT INTO " + table1 + " values ('" + username + "','" + userid + "','" + passwd + "')");
+			preparedStatement.executeUpdate();
 		} catch (Exception e){
-			e.getMessage();
+			System.out.println(e.getMessage());
 		}
 	}
 

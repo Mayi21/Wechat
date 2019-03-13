@@ -2,6 +2,7 @@ package Client;
 
 import Client.Buubble.BubbleSpec;
 import Client.Buubble.BubbledLabel;
+import Server.UserList;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -26,6 +27,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import util.MySqlDao;
 import java.io.File;
@@ -34,13 +36,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-/**
- * @author May
- */
 public class ChatCon implements Initializable {
 	@FXML private TextArea messageBox;
 	@FXML private Button messageSendButton;
@@ -212,7 +209,7 @@ public class ChatCon implements Initializable {
 				//数据库
 				deleteFriend();
 				//用户列表
-				Listener.addFrinedForUserList();
+				Listener.addFrinedForUserList(UserInfo.getId(currentUserName.getText()));
 				stage.close();
 			}
 		});
@@ -239,8 +236,10 @@ public class ChatCon implements Initializable {
 		PreparedStatement preparedStatement1 = null;
 		PreparedStatement preparedStatement2 = null;
 		try {
-			preparedStatement1 = connection.prepareStatement("DELETE from '" + selfId + "' where user='" + anotherId + "'" );
-			preparedStatement2 = connection.prepareStatement("DELETE FROM '" + anotherId + "' where user='" + selfId + "'");
+			String table1 = "u" + selfId;
+			String table2 = "u" + anotherId;
+			preparedStatement1 = connection.prepareStatement("DELETE from " + table1 + " where user='" + anotherId + "'" );
+			preparedStatement2 = connection.prepareStatement("DELETE FROM " + table2 + " where user='" + selfId + "'");
 			preparedStatement1.executeUpdate();
 			preparedStatement2.executeUpdate();
 		}catch (Exception e){
@@ -311,11 +310,10 @@ public class ChatCon implements Initializable {
 			public void handle(ActionEvent event) {
 				imageMenu.setGraphic(imageView);
 				//设置新头像后，将新头像覆盖老头像
-				String oldPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + idLabel.getText() + ".jpg";
+				String oldPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + UserInfo.getId(idLabel.getText()) + ".jpg";
 				File file = new File(newPath[0]);
 				File oldFile = new File(oldPath);
 				oldFile.delete();
-
 				file.renameTo(new File(oldPath));
 				window.close();
 			}
@@ -324,7 +322,6 @@ public class ChatCon implements Initializable {
 		VBox vBox = new VBox();
 		hBox.getChildren().addAll(imageView,button);
 		vBox.getChildren().addAll(hBox,subButton);
-
 		Scene scene = new Scene(vBox);
 		window.setScene(scene);
 		//使用showAndWait()先处理这个窗口，而如果不处理，main中的那个窗口不能响应
@@ -359,9 +356,10 @@ public class ChatCon implements Initializable {
 							//向数据库更新用户的username
 							update(afterChangeUserName);
 							idLabel.setText(textArea.getText());
-							String newPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + idLabel.getText() + ".jpg";
-							File newFile = new File(newPath);
-							file.renameTo(newFile);
+							//早先是因为用户名需要更改头像，因为头像是和用户id相连接的
+//							String newPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + idLabel.getText() + ".jpg";
+//							File newFile = new File(newPath);
+//							file.renameTo(newFile);
 							textArea.clear();
 							window.close();
 						} else {
@@ -400,9 +398,8 @@ public class ChatCon implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * 查询修改后的username是否已经在数据库存在了
-	 */
+
+	 //查询修改后的username是否已经在数据库存在了
 	public boolean select(String username){
 		Connection connection = MySqlDao.getConnection();
 		Statement statement = null;
@@ -436,6 +433,7 @@ public class ChatCon implements Initializable {
 			List<String> list = new LinkedList<>();
 			try {
 				JSONArray jsonArray = message.getJSONArray("List");
+				System.out.println(jsonArray);
 				for (int i = 0;i < jsonArray.length();i++){
 					//if (!jsonArray.getString(i).equals(UserInfo.getId(idLabel.getText()))){
 					list.add(UserInfo.getUserName(jsonArray.getString(i)));
@@ -495,6 +493,11 @@ public class ChatCon implements Initializable {
 						System.out.println(oldValue + "  " + newValue);
 
 						chatList.getItems().clear();
+						try {
+							sqladd(UserInfo.getId(newValue));
+						}catch (Exception e){
+
+						}
 					}
 					ChatCon.current = newValue;
 				});
@@ -517,10 +520,11 @@ public class ChatCon implements Initializable {
 				}
 			}
 			if (isUser){
-				ResultSet newResultSet = statement.executeQuery("select * from '" + userId + "'");
+				String table = "u" + userId;
+				ResultSet newResultSet = statement.executeQuery("select * from " + table);
 				while (newResultSet.next()){
 					//说明用户已经有这个好友了
-					if (resultSet.getString("user").equals(searchId)){
+					if (newResultSet.getString("user").equals(searchId)){
 						isFriend = true;
 						break;
 					}
@@ -553,9 +557,12 @@ public class ChatCon implements Initializable {
 				PreparedStatement preparedStatement = null;
 				PreparedStatement preparedStatement1 = null;
 				try {
-					preparedStatement1 = connection.prepareStatement("INSERT INTO'" + id + "' values ('" + UserInfo.getId(idLabel.getText() + "','" + idLabel.getText() + "'"));
+					String table1 = "u" + id;
+					String table2 = "u" + UserInfo.getId(idLabel.getText());
+					String status = "0";
+					preparedStatement1 = connection.prepareStatement("INSERT INTO " + table1 + " values ('" + UserInfo.getId(idLabel.getText()) + "','" + idLabel.getText() + "','" + status + "')");
 					preparedStatement1.executeUpdate();
-					preparedStatement = connection.prepareStatement("INSERT INTO '" + UserInfo.getId(idLabel.getText()) + "' values ('" + id + "','" + UserInfo.getUserName(id) + "'");
+					preparedStatement = connection.prepareStatement("INSERT INTO " + table2 + " values ('" + id + "','" + UserInfo.getUserName(id) + "','" + status + "')");
 					preparedStatement.executeUpdate();
 				}catch (Exception e){
 					e.printStackTrace();
@@ -577,7 +584,8 @@ public class ChatCon implements Initializable {
 		text.setFill(Color.RED);
 		hBox.getChildren().add(text);
 		Scene scene = new Scene(hBox);
-		stage.setWidth(100);
+		stage.initStyle(StageStyle.TRANSPARENT);
+		stage.setWidth(200);
 		stage.setHeight(50);
 		stage.setScene(scene);
 		stage.show();
@@ -599,7 +607,8 @@ public class ChatCon implements Initializable {
 		text.setFill(Color.RED);
 		hBox.getChildren().add(text);
 		Scene scene = new Scene(hBox);
-		stage.setWidth(100);
+		stage.initStyle(StageStyle.TRANSPARENT);
+		stage.setWidth(200);
 		stage.setHeight(50);
 		stage.setScene(scene);
 		stage.show();
@@ -612,6 +621,64 @@ public class ChatCon implements Initializable {
 			}
 		};
 		new Thread(t).start();
+	}
+	public void sqladd (String toid) throws Exception {
+		String sendid = UserInfo.getId(idLabel.getText());
+		Connection connection = MySqlDao.getConnection();
+		Connection connection1 = MySqlDao.getConnection();
+		Statement statement = connection.createStatement();
+		Statement statement1 = connection1.createStatement();
+		ResultSet resultSet = null;
+		ResultSet resultSet1 = null;
+		String sql = "SELECT log,time FROM log WHERE sendid=" + sendid + " AND toid=" + toid +" ORDER BY time DESC";
+		String sql1 = "SELECT log,time FROM log WHERE sendid=" + toid + " AND toid=" + sendid +" ORDER BY time DESC";
+		resultSet = statement.executeQuery(sql);
+		System.out.println(resultSet);
+		resultSet1 = statement1.executeQuery(sql1);
+		TreeMap<String ,JSONObject> recive = new TreeMap<>();
+		int i = 0;
+		while (resultSet.next() && i<6){
+			String time = resultSet.getString("time");
+			String log = resultSet.getString("log");
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("ToId",toid);
+				jsonObject.put("List",new JSONArray());
+				jsonObject.put("MessageType","CHAT");
+				jsonObject.put("Message",log);
+				jsonObject.put("SendId",sendid);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			recive.put(time,jsonObject);
+			i++;
+		}
+		int o = 0;
+		while (resultSet1.next() && o<6){
+			String time = resultSet1.getString("time");
+			String log = resultSet1.getString("log");
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("ToId",sendid);
+				jsonObject.put("List",new JSONArray());
+				jsonObject.put("MessageType","CHAT");
+				jsonObject.put("Message",log);
+				jsonObject.put("SendId",toid);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			recive.put(time,jsonObject);
+			o++;
+		}
+
+		recive.descendingMap();
+		int q = 0;
+		Iterator iterator= recive.keySet().iterator();
+		while (iterator.hasNext()&&q<6){
+			String key = (String) iterator.next();
+			addChat(recive.get(key));
+			q++;
+		}
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -630,7 +697,6 @@ public class ChatCon implements Initializable {
 			public void handle(MouseEvent event) {
 				if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)){
 					search.setScaleX(1.5);
-					//textField.setScaleY();
 					search.setScaleZ(1.5);
 				} else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)){
 					search.setScaleX(1);
@@ -646,22 +712,35 @@ public class ChatCon implements Initializable {
 					String searchCount = search.getText();
 					if (!searchCount.isEmpty()){
 						String s = searchUser(searchCount,UserInfo.getId(idLabel.getText()));
-						if (s.equals("0")){
+						if (s.equals("0") & !searchCount.equals(UserInfo.getId(idLabel.getText()))){
 							//表示此人不是你的好友,进行添加好友
 							//数据库操作，将两人添加到对方的数据库
 							addFriend(searchCount);
 							//当前用户的userlist的操作
-							Listener.addFrinedForUserList();
+							Listener.addFrinedForUserList(searchCount);
+							search.clear();
 						} else if (s.equals("-1")){
 							//表示此人不存在
 							searchNoThisUserStage();
+							search.clear();
 						} else {
 							//表示此人是你的好友
 							searchThisUserIsYourFriend();
+							search.clear();
 						}
 					}else {
 						//不做反应
 					}
+				}
+			}
+		});
+		messageSendButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				try {
+					send();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});

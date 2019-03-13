@@ -14,8 +14,7 @@ public class UserInfo {
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
-
-			resultSet = statement.executeQuery("SELECT id from wechat where userName='" + username + "'");
+			resultSet = statement.executeQuery("SELECT id from wechat where userName='" + username +"'");
 			while (resultSet.next()){
 				id = resultSet.getString("id");
 			}

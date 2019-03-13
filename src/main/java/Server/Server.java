@@ -2,6 +2,7 @@ package Server;
 
 import Client.UserInfo;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import util.MySqlDao;
 
@@ -9,6 +10,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -46,7 +48,9 @@ public class Server {
 				outputStream = socket.getOutputStream();
 				JSONObject jsonObject = get(inputStream);
 				id = jsonObject.getString("SendId");
+				System.out.println(id);
 				list = UserList.getFriendList(id);
+				System.out.println(new JSONArray(list));
 				map.put(id, outputStream);
 				jsonObject.put("List",new JSONArray(list));
 				jsonObject.put("MessageType","NOTIFICATION");
@@ -63,8 +67,7 @@ public class Server {
 						switch (type) {
 							case "CHAT":
 								sendMessage(inputMessage);
-								break;
-							case "DISCONNECT":
+								sqllog(inputMessage);
 								break;
 							case "UPDATEUSERLIST":
 								//要向自身发送更新消息
@@ -112,6 +115,7 @@ public class Server {
 			String toId = message.getString("ToId");
 			String sendId = message.getString("SendId");
 			if (map.containsKey(toId) && getFriendStatus(sendId,toId)) {
+				System.out.println("sendMessage");
 				OutputStream o = map.get(toId);
 				o.write(message.toString().getBytes());
 				o.flush();
@@ -124,26 +128,45 @@ public class Server {
 			ResultSet resultSet = null;
 			try {
 				statement = connection.createStatement();
-				resultSet = statement.executeQuery("SELECT * FROM '" + selfId + "' where user='" + anotherId + "'");
+				String table = "u" + selfId;
+				resultSet = statement.executeQuery("SELECT * FROM " + table + " where user=" + anotherId);
 				while (resultSet.next()){
 					if (resultSet.getString("status").equals("0")){
 						status = true;
 					}
 				}
 			} catch (Exception e){
-
+				System.out.println("Class:Server,Methond:getFriendStatus,Message:\n" + e.getMessage());
 			}
 			return status;
 		}
 		private void notificationAll (JSONObject message) throws Exception {
 			String sendId = message.getString("SendId");
-			LinkedList<String> linkedList = UserList.getFriendList(sendId);
-			for (String s: linkedList){
-				if (map.containsKey(s)){
-					OutputStream outputStream = map.get(s);
-					outputStream.write(message.toString().getBytes());
-					outputStream.flush();
-				}
+			if (map.containsKey(sendId)){
+				OutputStream outputStream = map.get(sendId);
+				outputStream.write(message.toString().getBytes());
+				outputStream.flush();
+			}
+		}
+		public static void sqllog(JSONObject message) throws JSONException {
+			Connection connection = MySqlDao.getConnection();
+			PreparedStatement statement = null;
+			String sql = "INSERT INTO log (log,sendid,toid,time) values (?,?,?,?)";
+			String log = message.getString("Message");
+			String sendid = message.getString("SendId");
+			String toid = message.getString("ToId");
+			String time;
+			time = String.valueOf(System.currentTimeMillis());
+			try {
+				statement = connection.prepareStatement(sql);
+				statement.setString(1, log);
+				statement.setString(2, sendid);
+				statement.setString(3, toid);
+				statement.setString(4, time);
+				statement.executeUpdate();
+				System.out.println("sql success");
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		public void notificationSelf(JSONObject message){
@@ -173,7 +196,7 @@ public class Server {
 				outputStream.write(newMessage.toString().getBytes());
 				outputStream.flush();
 			} catch (Exception e){
-
+				System.out.println("Class:Server,Method:notificationSelf,Message:\n" + e.getMessage());
 			}
 		}
 

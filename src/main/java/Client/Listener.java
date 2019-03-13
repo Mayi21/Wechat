@@ -97,12 +97,12 @@ public class Listener implements Runnable {
 //		}
 //
 //	}
-	public static void addFrinedForUserList(){
+	public static void addFrinedForUserList(String anotherId){
 		try {
 			JSONObject message = new JSONObject();
 			message.put("MessageType","UPDATEUSERLIST");
 			message.put("SendId",id);
-			message.put("ToId",UserInfo.getId(ChatCon.current));
+			message.put("ToId",anotherId);
 			message.put("Message","");
 			message.put("List",new JSONArray());
 			outputStream.write(message.toString().getBytes());
