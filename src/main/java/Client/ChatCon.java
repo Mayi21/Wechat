@@ -114,6 +114,7 @@ public class ChatCon implements Initializable {
 	public boolean getFriendStatus(String selfId,String anotherId){
 		Connection connection = MySqlDao.getConnection();
 		boolean status = false;
+		System.out.println("验证之前" + status);
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
@@ -123,11 +124,13 @@ public class ChatCon implements Initializable {
 			while (resultSet.next()){
 				if (resultSet.getString("status").equals("0")){
 					status = true;
+					break;
 				}
 			}
 		} catch (Exception e){
 			System.out.println("Class:Server,Methond:getFriendStatus,Message:\n" + e.getMessage());
 		}
+		System.out.println("验证之后" + status);
 		return status;
 	}
 	//只有当选中聊天用户时，才可以出现如下的菜单按钮
@@ -161,7 +164,6 @@ public class ChatCon implements Initializable {
 				}
 			});
 		}
-
 		opMenu.getItems().clear();
 		opMenu.getItems().addAll(menuItem1,menuItem2);
 	}
@@ -545,6 +547,9 @@ public class ChatCon implements Initializable {
 		LoginCon.stageL.close();
 	}
 	//得到正在聊天的用户名称
+	/**
+	 * TODO 得到当前的用户
+	 */
 	public void getToUser(){
 		opMenu();
 		userList.getSelectionModel().selectedItemProperty().addListener(
