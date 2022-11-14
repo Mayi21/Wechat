@@ -12,6 +12,10 @@ public class Check {
 	public static final String SQL = "SELECT * FROM wechat";
 	public static Connection connection;
 	public static String userName;
+
+	/**
+	 * 检查账户和密码是否对
+	 * */
 	public static boolean check(String account, String passwd){
 		boolean status = false;
 		connection = MySqlDao.getConnection();
