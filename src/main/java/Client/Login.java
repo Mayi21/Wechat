@@ -16,7 +16,7 @@ public class Login extends Application {
 		p = primaryStage;
 		try {
 			Parent parent = FXMLLoader.load(getClass().getResource("fxml/login.fxml"));
-			Image image1 = new Image("file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\cityos (2).jpg");
+			Image image1 = new Image("file:E:\\Study\\CodeProject\\Java\\Wechat\\src\\main\\resources\\cityos (2).jpg");
 			primaryStage.getIcons().add(image1);
 			primaryStage.setTitle("Chat");
 			Scene mainScene = new Scene(parent, 600, 400);
