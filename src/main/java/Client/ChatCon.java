@@ -2,7 +2,6 @@ package Client;
 
 import Client.Buubble.BubbleSpec;
 import Client.Buubble.BubbledLabel;
-import Server.UserList;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -29,6 +28,7 @@ import javafx.stage.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import util.ImageUtil;
 import util.MySqlDao;
 import java.io.File;
 import java.net.URL;
@@ -55,8 +55,7 @@ public class ChatCon implements Initializable {
 			@Override
 			protected HBox call() throws Exception {
 				String id = message.getString("SendId");
-				String path = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
-				Image image = new Image("file:" + path);
+				Image image = new Image(ImageUtil.getImageFilePath(id + ".jpg"));
 				ImageView imageView = new ImageView(image);
 				imageView.setFitHeight(30);
 				imageView.setFitWidth(30);
@@ -77,8 +76,7 @@ public class ChatCon implements Initializable {
 			@Override
 			protected HBox call() throws Exception {
 				String id = message.getString("SendId");
-				String path = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
-				Image image = new Image("file:" + path);
+				Image image = new Image(ImageUtil.getImageFilePath(id + ".jpg"));
 				ImageView imageView = new ImageView(image);
 				imageView.setFitHeight(30);
 				imageView.setFitWidth(30);
@@ -344,6 +342,7 @@ public class ChatCon implements Initializable {
 		window.initStyle(StageStyle.TRANSPARENT);
 		window.setMinWidth(300);
 		window.setMinHeight(150);
+
 		Image defaultImage = new Image("file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\头像.jpg");
 		ImageView imageView = new ImageView();
 		imageView.setFitHeight(60);
@@ -393,7 +392,7 @@ public class ChatCon implements Initializable {
 	}
 	//修改网名
 	public void display(){
-		String oldPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + idLabel.getText() + ".jpg";
+		String oldPath = ImageUtil.getImageFilePath(idLabel.getText() + ".jpg").replace("file:", "");
 		File file = new File(oldPath);
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);

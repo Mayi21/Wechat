@@ -1,14 +1,14 @@
 package Client;
-import javafx.application.Application;
 
-import javafx.fxml.FXML;
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import util.ImageUtil;
+
 public class Login extends Application {
 	private static Stage p;
 	@Override
@@ -16,8 +16,8 @@ public class Login extends Application {
 		p = primaryStage;
 		try {
 			Parent parent = FXMLLoader.load(getClass().getResource("fxml/login.fxml"));
-			Image image1 = new Image("file:E:\\Study\\CodeProject\\Java\\Wechat\\src\\main\\resources\\cityos (2).jpg");
-			primaryStage.getIcons().add(image1);
+			Image image = new Image(ImageUtil.getImageFilePath("cityos (2).jpg"));
+			primaryStage.getIcons().add(image);
 			primaryStage.setTitle("Chat");
 			Scene mainScene = new Scene(parent, 600, 400);
 			mainScene.getStylesheets().add(Login.class.getResource("login.css").toExternalForm());
