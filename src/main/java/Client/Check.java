@@ -20,13 +20,12 @@ public class Check {
 	public static String userName;
 
 	/**
-	 * 检查账户和密码是否对
+	 * 检查账户和密码是否正确
 	 * */
 	public static boolean check(String account, String passwd){
-		boolean status = false;
 		SqlSession sqlSession = MyBatisUtil.getSqlSession();
 		UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-		UserDo userByUserName = mapper.getUserByUserName(account);
+		UserDo userByUserName = mapper.getUserByWechatId(account);
 		if (Objects.isNull(userByUserName)) {
 			return false;
 		} else {
