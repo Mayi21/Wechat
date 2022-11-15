@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!-- 设置数据源类型。由于表格存储JDBC驱动需要主动关闭后才能让进程退出，请根据实际使用选择合适的数据源类型。-->
+            <!-- 如果程序常驻执行，则您可以使用POOLED维护一个连接池；如果希望程序完成数据查询后退出，则只能使用UNPOOLED。-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/wechat"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!-- 设置为映射配置文件的路径。-->
+        <mapper resource="mybatis/UserMapper.xml"/>
+    </mappers>
+</configuration>
