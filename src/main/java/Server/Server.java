@@ -79,9 +79,7 @@ public class Server {
 						System.out.println(inputMessage.getString("ToId"));
 					}
 				}
-			} catch (EOFException e) {
-				e.printStackTrace();
-			} catch (Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				if (inputStream != null){
