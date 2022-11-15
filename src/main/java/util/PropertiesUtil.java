@@ -15,7 +15,7 @@ public class PropertiesUtil {
 				String ip = properties.getProperty("database.ip");
 				String port = properties.getProperty("database.port");
 				String dbName = properties.getProperty("database.name");
-				String url = String.format("jdbc:postgresql://%s:%s/%s", ip, port, dbName);
+				String url = String.format("jdbc:mysql://%s:%s/%s", ip, port, dbName);
 				String userName = properties.getProperty("database.username");
 				String passwd = properties.getProperty("database.passwd");
 				return new DBConfigEntity(userName, passwd, url);

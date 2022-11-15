@@ -4,7 +4,9 @@ import lombok.Data;
 
 @Data
 public class UserDo {
-	private String name;
+	private String wechatId;
+
+	private String wechatName;
 
 	private String passwd;
 }

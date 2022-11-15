@@ -4,6 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.UserMapper">
     <select id="getUserByUserName" parameterType="string" resultType="entity.UserDo">
-        select * from t_user where name=#{userName}
+        select * from t_user where wechat_id=#{wechatId}
+    </select>
+
+    <select id="getAllWechatId" resultType="string">
+        select wechat_id from t_user
     </select>
 </mapper>

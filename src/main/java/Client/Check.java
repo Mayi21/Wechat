@@ -1,16 +1,19 @@
 package Client;
 
+import entity.UserDo;
+import mapper.UserMapper;
+import org.apache.ibatis.session.SqlSession;
+import util.MyBatisUtil;
 import util.MySqlDao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Objects;
 
 public class Check {
 	private static String id;
 	private static String pa;
-	public static final String SQL = "SELECT * FROM wechat";
-	public static Connection connection;
 	public static String userName;
 
 	/**
@@ -18,24 +21,19 @@ public class Check {
 	 * */
 	public static boolean check(String account, String passwd){
 		boolean status = false;
-		connection = MySqlDao.getConnection();
-		Statement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery(SQL);
-			while (resultSet.next()){
-				Check.id = resultSet.getString("id");
-				Check.pa = resultSet.getString("passwd");
-				if (account.equals(Check.id) & passwd.equals(Check.pa)){
-					userName = resultSet.getString("userName");
-					status = true;
-					break;
-				}
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+		UserDo userByUserName = mapper.getUserByUserName(account);
+		if (Objects.isNull(userByUserName)) {
+			return false;
+		} else {
+			if (passwd.equals(userByUserName.getPasswd())) {
+				id = account;
+				pa = passwd;
+				return true;
+			} else {
+				return false;
 			}
-		} catch (Exception e){
-			e.printStackTrace();
 		}
-		return status;
 	}
 }
