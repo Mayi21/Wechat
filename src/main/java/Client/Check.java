@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Objects;
 
+/**
+ * 用户登录判断
+ * */
 public class Check {
 	private static String id;
 	private static String pa;
