@@ -25,10 +25,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import mapper.UserFriendMapper;
+import org.apache.ibatis.session.SqlSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.ImageUtil;
+import util.MyBatisUtil;
 import util.MySqlDao;
 import java.io.File;
 import java.net.URL;
@@ -110,26 +113,19 @@ public class ChatCon implements Initializable {
 	}
 	//得到用户的好友列表中anotherId的状态
 	public boolean getFriendStatus(String selfId,String anotherId){
-		Connection connection = MySqlDao.getConnection();
-		boolean status = false;
-		System.out.println("验证之前" + status);
-		Statement statement = null;
-		ResultSet resultSet = null;
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
+		int friendStatus = -1;
 		try {
-			statement = connection.createStatement();
-			String table = "u" + selfId;
-			resultSet = statement.executeQuery("SELECT * FROM " + table + " where user=" + anotherId);
-			while (resultSet.next()){
-				if (resultSet.getString("status").equals("0")){
-					status = true;
-					break;
-				}
+			friendStatus = mapper.getFriendStatus(selfId, anotherId);
+			if (friendStatus == 0) {
+				return true;
 			}
-		} catch (Exception e){
-			System.out.println("Class:Server,Methond:getFriendStatus,Message:\n" + e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		System.out.println("验证之后" + status);
-		return status;
+		System.out.println("验证之后" + friendStatus);
+		return false;
 	}
 	//只有当选中聊天用户时，才可以出现如下的菜单按钮
 	public void opMenu(){
@@ -228,30 +224,24 @@ public class ChatCon implements Initializable {
 	public void removeFriendToBlackListForDataBase(){
 		String selfId = UserInfo.getId(idLabel.getText());
 		String anotherId = UserInfo.getId(currentUserName.getText());
-		Connection connection = MySqlDao.getConnection();
-		PreparedStatement preparedStatement = null;
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
 		try {
-			String table = "u" + selfId;
-			String status = "0";
-			preparedStatement = connection.prepareStatement("UPDATE " + table + " set status=" + status + " where user=" + anotherId);
-			preparedStatement.executeUpdate();
-		} catch (Exception e){
-
+			mapper.updateStatus(selfId, anotherId, 0);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	//把好友加入到黑名单的数据库操作
 	public void addFriendToBlackListForDataBase(){
 		String selfId = UserInfo.getId(idLabel.getText());
 		String anotherId = UserInfo.getId(currentUserName.getText());
-		Connection connection = MySqlDao.getConnection();
-		PreparedStatement preparedStatement = null;
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
 		try {
-			String table = "u" + selfId;
-			String status = "1";
-			preparedStatement = connection.prepareStatement("UPDATE " + table + " set status=" + status + " where user=" + anotherId);
-			preparedStatement.executeUpdate();
-		} catch (Exception e){
-
+			mapper.updateStatus(selfId, anotherId, 1);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	//删除好友的syage
@@ -451,6 +441,7 @@ public class ChatCon implements Initializable {
 		PreparedStatement preparedStatement = null;
 		try {
 			String id = UserInfo.getId(idLabel.getText());
+
 			preparedStatement = connection.prepareStatement("UPDATE wechat SET userName='" + username + "' WHERE id=" + id);
 			preparedStatement.executeUpdate();
 		} catch (Exception e){

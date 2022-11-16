@@ -14,6 +14,7 @@ public class MySqlDao {
 		}
 		return connection;
 	}
+	// TODO 数据操作方式迁移
 	public static Connection getConnection() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");

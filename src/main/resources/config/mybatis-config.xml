@@ -10,7 +10,7 @@
             <!-- 如果程序常驻执行，则您可以使用POOLED维护一个连接池；如果希望程序完成数据查询后退出，则只能使用UNPOOLED。-->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/wechat"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/wechat?serverTimezone=Asia/Shanghai"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>

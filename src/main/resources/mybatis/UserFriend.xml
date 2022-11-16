@@ -3,7 +3,36 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.UserFriendMapper">
+    <resultMap id="BaseResultMap" type="entity.UserFriendDo">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="wechat_id" property="wechatId" jdbcType="VARCHAR" />
+        <result column="friend_id" property="friendId" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
     <select id="getUserFriend" resultType="string">
         select friend_id from t_friend where wechat_id=#{wechatId}
     </select>
+
+    <select id="getFriendStatus" resultType="int">
+        select status from t_friend where wechat_id=#{wechatId} and friend_id=#{friendId}
+    </select>
+
+    <update id="updateStatus">
+        update t_friend set status=#{status} where wechat_id=#{wechatId} and friend_id=#{friendId}
+    </update>
+
+    <delete id="deleteFriend">
+        delete from t_friend where wechat_id=#{wechatId}
+    </delete>
+
+    <insert id="addFriend" useGeneratedKeys="true" keyProperty="id" parameterType="entity.UserFriendDo">
+        insert into t_friend (id, wechat_id, friend_id, `status`, create_time, update_time)
+        values (#{id}, #{wechatId}, #{friendId}, 1, now(), now())
+    </insert>
+
+    <insert id="test">
+        insert into test (a, b) values ("12", "34")
+    </insert>
 </mapper>

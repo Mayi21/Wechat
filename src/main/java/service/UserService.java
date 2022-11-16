@@ -2,6 +2,7 @@ package service;
 
 
 import entity.UserDo;
+import entity.UserFriendDo;
 import mapper.UserFriendMapper;
 import mapper.UserMapper;
 import org.apache.ibatis.session.SqlSession;
@@ -23,8 +24,11 @@ public class UserService {
 //		}
 
 		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
-		Set<String> xaohii = mapper.getUserFriend("xaohii");
-		System.out.println(Arrays.toString(xaohii.toArray()));
+		mapper.addFriend(new UserFriendDo("xiao", "xaoo"));
+
+//		mapper.test();
+		sqlSession.commit();
+
 
 	}
 
