@@ -20,5 +20,6 @@
         <!-- 设置为映射配置文件的路径。-->
         <mapper resource="mybatis/UserMapper.xml"/>
         <mapper resource="mybatis/UserFriend.xml"/>
+        <mapper resource="mybatis/Log.xml"/>
     </mappers>
 </configuration>
