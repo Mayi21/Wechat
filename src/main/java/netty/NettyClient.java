@@ -10,15 +10,13 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 public class NettyClient {
 	private final Logger LOG = LoggerFactory.getLogger(NettyClient.class);
-	@Value("127.0.0.1")
-	private String host;
 
-	@Value("${netty.client.port}")
-	private int port;
+	private String host = "127.0.0.1";
+
+	private int port = 12345;
 	private Bootstrap b = new Bootstrap();
 
 	private Channel channel;

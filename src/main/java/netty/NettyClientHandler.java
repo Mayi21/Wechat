@@ -4,15 +4,12 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
 @ChannelHandler.Sharable
 public class NettyClientHandler extends SimpleChannelInboundHandler<Message> {
-	@Autowired
+
 	private NettyClientAdapter nettyClientAdapter;
 
 	@Override

@@ -3,9 +3,7 @@ package netty;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.springframework.stereotype.Service;
 
-@Service
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 	private NettyServer nettyServer;
 
@@ -29,8 +27,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 				channelHandlerContext.writeAndFlush(nettyServer.getNotifyMessage());
 				break;
 			case 2:
-
-
+				break;
 		}
 	}
 

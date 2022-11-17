@@ -1,9 +1,6 @@
 package netty;
 
 import com.alibaba.fastjson.JSON;
-import com.xaohii.chat.repository.entity.po.MessagePo;
-import com.xaohii.chat.service.MessageServiceImpl;
-import com.xaohii.chat.utils.common.P2vUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,19 +9,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
 public class NettyServer {
-	@Autowired
-	private MessageServiceImpl messageService;
-	@Value("${netty.client.port}")
-	private int port;
+	private int port = 12345;
 
 	/**
 	 * user id 到channel的映射
@@ -84,8 +74,8 @@ public class NettyServer {
 
 	//发送消息给下游设备
 	public void writeMsg(Message msg) {
-		MessagePo messagePo = P2vUtil.convertMessage2Po(msg);
-		messageService.insertData(messagePo);
+//		MessagePo messagePo = P2vUtil.convertMessage2Po(msg);
+//		messageService.insertData(messagePo);
 		Map<String, Channel> channelMap = getChannelMap();
 		try {
 			Channel channel = channelMap.get(String.valueOf(msg.getToUserId()));

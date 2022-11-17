@@ -1,12 +1,9 @@
 package netty;
 
 import io.netty.channel.Channel;
-import org.springframework.stereotype.Service;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
 public class NettyClientAdapter {
 	private Map<String, Channel> id2ChannelMap = new ConcurrentHashMap<>();
 
