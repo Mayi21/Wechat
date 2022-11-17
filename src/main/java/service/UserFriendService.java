@@ -21,5 +21,4 @@ public class UserFriendService {
 		mapper.addFriend(new UserFriendDo(friendId, wechatId));
 		sqlSession.commit();
 	}
-
 }

@@ -13,6 +13,8 @@ public interface UserMapper {
 
 	public String getWechatNameByWechatId(String wechatId);
 
+	public String getWechatIdByWechatName(String wechatName);
+
 	public void updatePasswdByWechatId(@Param("passwd") String passwd, @Param("wechatId") String wechatId);
 	public void updateWechatNameByWechatId(@Param("wecahtName") String wechatName, @Param("wechatId") String wechatId);
 }

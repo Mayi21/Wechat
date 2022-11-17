@@ -15,6 +15,10 @@
         select wechat_name from t_user where wechat_id=#{wechatId}
     </select>
 
+    <select id="getWechatIdByWechatName" resultType="string">
+        select wechat_id from t_user where wechat_name=#{wechatName}
+    </select>
+
     <update id="updatePasswdByWechatId">
         update t_user set passwd=#{passwd}, update_time=now() where wechat_id=#{wechatId}
     </update>

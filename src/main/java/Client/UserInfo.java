@@ -1,6 +1,7 @@
 package Client;
 
 import mapper.UserMapper;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.session.SqlSession;
 import util.MyBatisUtil;
 import util.MySqlDao;
@@ -12,22 +13,16 @@ import java.util.Objects;
 
 public class UserInfo {
 	public static String getId(String username){
-		String id = null;
-		Connection connection = MySqlDao.getConnection();
-		ResultSet resultSet = null;
-		Statement statement = null;
-		try {
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT id from wechat where userName='" + username +"'");
-			while (resultSet.next()){
-				id = resultSet.getString("id");
-			}
-
-		} catch (Exception e){
-			e.printStackTrace();
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+		String wechatIdByWechatName = mapper.getWechatIdByWechatName(username);
+		if (ObjectUtils.isEmpty(wechatIdByWechatName)) {
+			return "";
+		} else {
+			return wechatIdByWechatName;
 		}
-		return id;
 	}
+
 	public static String getUserName(String id){
 		SqlSession sqlSession = MyBatisUtil.getSqlSession();
 		UserMapper mapper = sqlSession.getMapper(UserMapper.class);
