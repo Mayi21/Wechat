@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 public class MySqlDao {
 	private static final String userName = "root";
 	private static final String passwd = "123456";
-	private static final String connectionURL = "jdbc:mysql://rm-bp1d25b9b69cz96v43o.mysql.rds.aliyuncs.com:3306/zut?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
+	private static final String connectionURL = "jdbc:mysql://127.0.0.1:3306/wechat";
 	public static Connection AD(int a){
 		Connection connection = getConnection();
 		if (a == 0){

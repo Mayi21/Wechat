@@ -1,16 +1,11 @@
 package service;
 
-
 import entity.UserDo;
 import entity.UserFriendDo;
 import mapper.UserFriendMapper;
 import mapper.UserMapper;
 import org.apache.ibatis.session.SqlSession;
 import util.MyBatisUtil;
-
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
 
 public class UserService {
 	public static void main(String[] args) {
@@ -25,11 +20,14 @@ public class UserService {
 
 		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
 		mapper.addFriend(new UserFriendDo("xiao", "xaoo"));
-
-//		mapper.test();
 		sqlSession.commit();
+	}
 
-
+	public void update(UserDo userDo) {
+		SqlSession sqlSession = MyBatisUtil.getSqlSession();
+		UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+		mapper.updatePasswdByWechatId("12345", "xaohii");
+		sqlSession.commit();
 	}
 
 }

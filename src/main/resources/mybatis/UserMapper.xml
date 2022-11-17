@@ -15,10 +15,11 @@
         select wechat_name from t_user where wechat_id=#{wechatId}
     </select>
 
-    <update id="updateUserById" parameterType="entity.UserDo">
-        update t_user set wechat_name=#{wechatName},
-                          passwd=#{passwd},
-                          update_time=now()
-        where wechat_id=#{wechatId}
+    <update id="updatePasswdByWechatId">
+        update t_user set passwd=#{passwd}, update_time=now() where wechat_id=#{wechatId}
+    </update>
+
+    <update id="updateWechatNameByWechatId">
+        update t_user set wechat_name=#{wecahtName}, update_time=now() where wechat_id=#{wechatId}
     </update>
 </mapper>

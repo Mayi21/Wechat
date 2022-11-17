@@ -2,6 +2,7 @@ package mapper;
 
 
 import entity.UserDo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Set;
 
@@ -12,5 +13,6 @@ public interface UserMapper {
 
 	public String getWechatNameByWechatId(String wechatId);
 
-	public void updateUserById(UserDo userDo);
+	public void updatePasswdByWechatId(@Param("passwd") String passwd, @Param("wechatId") String wechatId);
+	public void updateWechatNameByWechatId(@Param("wecahtName") String wechatName, @Param("wechatId") String wechatId);
 }

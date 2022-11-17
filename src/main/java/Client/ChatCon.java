@@ -30,6 +30,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import service.UserFriendService;
 import util.ImageUtil;
 import util.MyBatisUtil;
 import util.MySqlDao;
@@ -281,20 +282,8 @@ public class ChatCon implements Initializable {
 		//删除好友在两个人的数据库中
 		String selfId = UserInfo.getId(idLabel.getText());
 		String anotherId = UserInfo.getId(currentUserName.getText());
-		Connection connection = MySqlDao.getConnection();
-		PreparedStatement preparedStatement1 = null;
-		PreparedStatement preparedStatement2 = null;
-		try {
-			String table1 = "u" + selfId;
-			String table2 = "u" + anotherId;
-			System.out.println();
-			preparedStatement1 = connection.prepareStatement("DELETE from " + table1 + " where user=" + anotherId);
-			preparedStatement2 = connection.prepareStatement("DELETE FROM " + table2 + " where user=" + selfId);
-			preparedStatement1.executeUpdate();
-			preparedStatement2.executeUpdate();
-		}catch (Exception e){
-
-		}
+		UserFriendService userFriendService = new UserFriendService();
+		userFriendService.deleteUserFriend(selfId, anotherId);
 	}
 	//设置当前用户的名字
 	public void setUserLabel(String id){
@@ -302,7 +291,7 @@ public class ChatCon implements Initializable {
 	}
 	//设置menu里面的头像
 	public void setImageView(String id){
-		String url = "file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + id + ".jpg";
+		String url = ImageUtil.getImageFilePath(id + ".jpg");
 		Image image = new Image(url);
 		ImageView imageView = new ImageView(image);
 		imageView.setFitHeight(60);
