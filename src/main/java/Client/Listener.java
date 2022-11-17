@@ -1,8 +1,13 @@
 package Client;
 
+import entity.LogPo;
+import mapper.LogMapper;
+import org.apache.ibatis.session.SqlSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import service.LogService;
+import util.MyBatisUtil;
 import util.MySqlDao;
 
 import java.io.InputStream;
@@ -81,25 +86,11 @@ public class Listener implements Runnable {
 		outputStream.write(bytes);
 	}
 	public static void sqllog(JSONObject message) throws JSONException {
-		Connection connection = MySqlDao.getConnection();
-		PreparedStatement statement = null;
-		String sql = "INSERT INTO log (log,sendid,toid,time) values (?,?,?,?)";
-		String log = message.getString("Message");
-		String sendid = message.getString("SendId");
-		String toid = message.getString("ToId");
-		String time;
-		time = String.valueOf(System.currentTimeMillis());
-		try {
-			statement = connection.prepareStatement(sql);
-			statement.setString(1, log);
-			statement.setString(2, sendid);
-			statement.setString(3, toid);
-			statement.setString(4, time);
-			statement.executeUpdate();
-			System.out.println("sql success");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		LogService logService = new LogService();
+		LogPo logPo = new LogPo(message.getString("Message"),
+								message.getString("SendId"),
+								message.getString("ToId"));
+		logService.addLog(logPo);
 	}
 	public static void connect() throws Exception{
 		JSONObject jsonObject = new JSONObject();
