@@ -1,5 +1,6 @@
 package Client;
 
+import auth.LoginAuth;
 import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -47,8 +48,8 @@ public class LoginCon implements Initializable {
 	public void login() throws Exception{
 		String id = userId.getText();
 		String pa = passwd.getText();
-		if (Check.check(id,pa)) {
-			userName = Check.userName;
+		if (LoginAuth.check(id,pa)) {
+			userName = LoginAuth.userName;
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
