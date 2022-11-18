@@ -16,7 +16,7 @@ import netty.Message;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Server {
+public class Server implements Runnable {
 	private int port = 12345;
 
 	/**
@@ -90,7 +90,8 @@ public class Server {
 		}
 	}
 
-	public void bind() {
+	@Override
+	public void run() {
 		System.out.println("service start successful");
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -117,6 +118,10 @@ public class Server {
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();
 		}
+	}
+
+	public static void main(String[] args) {
+		new Thread(new Server()).start();
 	}
 }
 
