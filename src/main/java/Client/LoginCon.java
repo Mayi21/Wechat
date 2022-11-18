@@ -19,6 +19,7 @@ import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import util.LocalContext;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,8 +38,6 @@ public class LoginCon implements Initializable {
 	public static String userName;
 	public static Stage stageL;
 
-
-
 	public LoginCon(){
 		loginCon = this;
 	}
@@ -53,9 +52,9 @@ public class LoginCon implements Initializable {
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
-			Listener listener = new Listener(server.getText(),port.getText(),userId.getText(),control);
-			Thread thread = new Thread(listener);
-			thread.start();
+			LocalContext.setChatCon(control);
+			LocalContext.setWechatId(userId.getText());
+			new Thread(new ChatListener()).start();
 			this.scene = new Scene(parent);
 		} else {
 			dong();
