@@ -1,10 +1,11 @@
 package netty;
 
 import io.netty.channel.Channel;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class NettyClientAdapter {
+public class ClientAdapter {
 	private Map<String, Channel> id2ChannelMap = new ConcurrentHashMap<>();
 
 	private Map<String, String> id2UserNameMap = new ConcurrentHashMap<>();
