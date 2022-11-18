@@ -1,11 +1,12 @@
-package Client.Buubble;
+package Client.bubble;
 
+import enums.BubbleSpecEnum;
 import javafx.scene.shape.*;
 
 public class Bubble extends Path {
-	public Bubble(BubbleSpec bubbleSpec) {
+	public Bubble(BubbleSpecEnum bubbleSpecEnum) {
 		super();
-		switch (bubbleSpec) {
+		switch (bubbleSpecEnum) {
 			case FACE_BOTTOM:
 				break;
 			case FACE_LEFT_BOTTOM:

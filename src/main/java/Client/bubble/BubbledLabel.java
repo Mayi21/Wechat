@@ -1,5 +1,6 @@
-package Client.Buubble;
+package Client.bubble;
 
+import enums.BubbleSpecEnum;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
@@ -13,22 +14,7 @@ import javafx.scene.shape.Shape;
 
 public class BubbledLabel extends Label {
 
-	/*Copyright {2015} {Terah Laweh}
-
-	   Licensed under the Apache License, Version 2.0 (the "License");
-	   you may not use this file except in compliance with the License.
-	   You may obtain a copy of the License at
-
-	       http://www.apache.org/licenses/LICENSE-2.0
-
-	   Unless required by applicable law or agreed to in writing, software
-	   distributed under the License is distributed on an "AS IS" BASIS,
-	   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	   See the License for the specific language governing permissions and
-	   limitations under the License.
-	*/
-
-	private BubbleSpec bs = BubbleSpec.FACE_LEFT_CENTER;
+	private BubbleSpecEnum bs = BubbleSpecEnum.FACE_LEFT_CENTER;
 	private double pading = 5.0;
 	private boolean systemCall = false;
 
@@ -47,21 +33,21 @@ public class BubbledLabel extends Label {
 		init();
 	}
 
-	public BubbledLabel(BubbleSpec bubbleSpec) {
+	public BubbledLabel(BubbleSpecEnum bubbleSpecEnum) {
 		super();
-		this.bs = bubbleSpec;
+		this.bs = bubbleSpecEnum;
 		init();
 	}
 
-	public BubbledLabel(String arg0, Node arg1,BubbleSpec bubbleSpec) {
+	public BubbledLabel(String arg0, Node arg1, BubbleSpecEnum bubbleSpecEnum) {
 		super(arg0, arg1);
-		this.bs = bubbleSpec;
+		this.bs = bubbleSpecEnum;
 		init();
 	}
 
-	public BubbledLabel(String arg0,BubbleSpec bubbleSpec) {
+	public BubbledLabel(String arg0, BubbleSpecEnum bubbleSpecEnum) {
 		super(arg0);
-		this.bs = bubbleSpec;
+		this.bs = bubbleSpecEnum;
 		init();
 	}
 
@@ -155,12 +141,12 @@ public class BubbledLabel extends Label {
 		this.pading = pading;
 	}
 
-	public BubbleSpec getBubbleSpec() {
+	public BubbleSpecEnum getBubbleSpec() {
 		return bs;
 	}
 
-	public void setBubbleSpec(BubbleSpec bubbleSpec) {
-		this.bs = bubbleSpec;
+	public void setBubbleSpec(BubbleSpecEnum bubbleSpecEnum) {
+		this.bs = bubbleSpecEnum;
 		shapeIt();
 	}
 
