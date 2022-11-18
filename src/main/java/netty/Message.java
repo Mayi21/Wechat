@@ -1,6 +1,7 @@
 package netty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import enums.MessageTypeEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,7 +12,7 @@ public class Message implements Serializable {
 	private String userName;
 
 	@JsonProperty(value = "user_id")
-	private Long userId;
+	private String userId;
 
 	private String message;
 
@@ -19,16 +20,16 @@ public class Message implements Serializable {
 	private String toUserName;
 
 	@JsonProperty(value = "to_user_id")
-	private Long toUserId;
+	private String toUserId;
 
 	/**
 	 * 类型目前有：
-	 * 	0:普通消息;
-	 * 	1:注册消息;
-	 * 	2:心跳
-	 * 	3.好友列表
+	 * 	普通消息 message;
+	 * 	注册消息 sign;
+	 * 	好友列表 friendList
+	 * 	通知消息 notification
 	 * */
-	private int type;
+	private MessageTypeEnum type;
 
 	@Override
 	public String toString() {
@@ -38,7 +39,7 @@ public class Message implements Serializable {
 				", message='" + message + '\'' +
 				", toUserName='" + toUserName + '\'' +
 				", toUserId=" + toUserId +
-				", type=" + type +
+				", type=" + type.getValue() +
 				'}';
 	}
 }
