@@ -1,18 +1,16 @@
-package Server;
+package server;
 
 
 import mapper.UserFriendMapper;
 import org.apache.ibatis.session.SqlSession;
 import util.MyBatisUtil;
-import util.MySqlDao;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 
+/**
+ * 获取当前wechatId的好友id
+ * */
 public class UserList {
 	public static LinkedList<String> getFriendList(String id){
 		SqlSession sqlSession = MyBatisUtil.getSqlSession();
