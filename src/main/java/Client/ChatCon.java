@@ -1,7 +1,7 @@
 package Client;
 
-import Client.Buubble.BubbleSpec;
-import Client.Buubble.BubbledLabel;
+import enums.BubbleSpecEnum;
+import Client.bubble.BubbledLabel;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -26,11 +26,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.*;
 import mapper.UserFriendMapper;
+import mapper.UserMapper;
+import netty.Message;
 import org.apache.ibatis.session.SqlSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import service.UserFriendService;
+import service.UserService;
 import util.ImageUtil;
 import util.MyBatisUtil;
 import util.MySqlDao;
@@ -53,22 +56,23 @@ public class ChatCon implements Initializable {
 	@FXML private Menu opMenu;
 	@FXML private TextField search;
 	public static String current;
+
 	//将聊天信息登记到聊天列表中
-	public synchronized void addChat(JSONObject message) throws Exception {
+	public synchronized void addChat(Message message) throws Exception {
 		Task<HBox> hBoxTask = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
-				String id = message.getString("SendId");
+				String id = message.getUserId();
 				Image image = new Image(ImageUtil.getImageFilePath(id + ".jpg"));
 				ImageView imageView = new ImageView(image);
 				imageView.setFitHeight(30);
 				imageView.setFitWidth(30);
 				BubbledLabel bubbledLabel = new BubbledLabel();
-				bubbledLabel.setText(message.getString("Message"));
+				bubbledLabel.setText(message.getMessage());
 				bubbledLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_RIGHT);
-				bubbledLabel.setBubbleSpec(BubbleSpec.FACE_RIGHT_CENTER);
+				bubbledLabel.setBubbleSpec(BubbleSpecEnum.FACE_RIGHT_CENTER);
 				x.getChildren().addAll(bubbledLabel,imageView);
 				return x;
 			}
@@ -79,17 +83,17 @@ public class ChatCon implements Initializable {
 		Task<HBox> hboxTask = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
-				String id = message.getString("SendId");
+				String id = message.getUserId();
 				Image image = new Image(ImageUtil.getImageFilePath(id + ".jpg"));
 				ImageView imageView = new ImageView(image);
 				imageView.setFitHeight(30);
 				imageView.setFitWidth(30);
 				BubbledLabel bubbledLabel = new BubbledLabel();
-				bubbledLabel.setText(message.getString("Message"));
+				bubbledLabel.setText(message.getMessage());
 				bubbledLabel.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
 				HBox x = new HBox();
 				x.setAlignment(Pos.TOP_LEFT);
-				bubbledLabel.setBubbleSpec(BubbleSpec.FACE_LEFT_CENTER);
+				bubbledLabel.setBubbleSpec(BubbleSpecEnum.FACE_LEFT_CENTER);
 				x.getChildren().addAll(imageView,bubbledLabel);
 				return x;
 			}
@@ -98,13 +102,13 @@ public class ChatCon implements Initializable {
 			chatList.getItems().add(hboxTask.getValue());
 		});
 
-		if (message.getString("SendId").equals(UserInfo.getId(idLabel.getText()))) {
+		if (message.getUserId().equals(UserInfo.getId(idLabel.getText()))) {
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
 			thread.start();
-		} else if (message.getString("SendId").equals(UserInfo.getId(currentUserName.getText()))) {
-			String selfId = message.getString("SendId");
-			String anotherId = message.getString("ToId");
+		} else if (message.getUserId().equals(UserInfo.getId(currentUserName.getText()))) {
+			String selfId = message.getUserId();
+			String anotherId = message.getToUserId();
 			if (getFriendStatus(anotherId,selfId)){
 				Thread thread = new Thread(hboxTask);
 				thread.setDaemon(true);
@@ -259,7 +263,7 @@ public class ChatCon implements Initializable {
 				//数据库
 				deleteFriend();
 				//用户列表
-				Listener.addFrinedForUserList(UserInfo.getId(currentUserName.getText()));
+				ChatListener.addFrinedForUserList(UserInfo.getId(currentUserName.getText()));
 				stage.close();
 			}
 		});
@@ -322,7 +326,8 @@ public class ChatCon implements Initializable {
 		window.setMinWidth(300);
 		window.setMinHeight(150);
 
-		Image defaultImage = new Image("file:D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\头像.jpg");
+		String imageFilePath = ImageUtil.getImageFilePath("头像.jpg");
+		Image defaultImage = new Image(imageFilePath);
 		ImageView imageView = new ImageView();
 		imageView.setFitHeight(60);
 		imageView.setFitWidth(60);
@@ -352,11 +357,11 @@ public class ChatCon implements Initializable {
 			public void handle(ActionEvent event) {
 				imageMenu.setGraphic(imageView);
 				//设置新头像后，将新头像覆盖老头像
-				String oldPath = "D:\\Study\\JAVA\\idea\\Wechat\\src\\main\\resources\\" + UserInfo.getId(idLabel.getText()) + ".jpg";
+				String s = ImageUtil.getImageFilePath(UserInfo.getId(idLabel.getText()) + ".jpg").replace("file:", "");
 				File file = new File(newPath[0]);
-				File oldFile = new File(oldPath);
+				File oldFile = new File(s);
 				oldFile.delete();
-				file.renameTo(new File(oldPath));
+				file.renameTo(new File(s));
 				window.close();
 			}
 		});
@@ -369,7 +374,12 @@ public class ChatCon implements Initializable {
 		//使用showAndWait()先处理这个窗口，而如果不处理，main中的那个窗口不能响应
 		window.showAndWait();
 	}
-	//修改网名
+
+	/**
+	 * 功能：修改网名
+	 * 实现：从输入框获取名字后，首先判断是否为空、是否过长、是否重复
+	 * 建议：没必要了，可以更改为修改wechat id，name并不唯一，这里不能这样用，后期再改吧
+	 * */
 	public void display(){
 		String oldPath = ImageUtil.getImageFilePath(idLabel.getText() + ".jpg").replace("file:", "");
 		File file = new File(oldPath);
@@ -391,19 +401,12 @@ public class ChatCon implements Initializable {
 					String afterChangeUserName = textArea.getText();
 					//判断输入是否过长
 					if (afterChangeUserName.length() <= 6 ){
-						//判断数据库是否存在这个用户名
-						if (select(afterChangeUserName)){
-							//向数据库更新用户的username
-							update(afterChangeUserName);
-							idLabel.setText(textArea.getText());
-							//早先是因为用户名需要更改头像，因为头像是和用户id相连接的
-							textArea.clear();
-							window.close();
-						} else {
-							text.setText("用户名已经存在，请更换名字");
-							text.setFill(Color.RED);
-							textArea.clear();
-						}
+						//向数据库更新用户的username
+						update(afterChangeUserName);
+						idLabel.setText(textArea.getText());
+						//早先是因为用户名需要更改头像，因为头像是和用户id相连接的
+						textArea.clear();
+						window.close();
 					} else {
 						text.setText("用户名过长，请更换名字");
 						text.setFill(Color.RED);
@@ -426,43 +429,14 @@ public class ChatCon implements Initializable {
 	}
 	//更新用户的username
 	public void update(String username){
-		Connection connection = MySqlDao.getConnection();
-		PreparedStatement preparedStatement = null;
-		try {
-			String id = UserInfo.getId(idLabel.getText());
-
-			preparedStatement = connection.prepareStatement("UPDATE wechat SET userName='" + username + "' WHERE id=" + id);
-			preparedStatement.executeUpdate();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-	}
-	 //查询修改后的username是否已经在数据库存在了
-	public boolean select(String username){
-		Connection connection = MySqlDao.getConnection();
-		Statement statement = null;
-		ResultSet resultSet = null;
-		boolean status = true;
-		try {
-			statement = connection.createStatement();
-			String sql = "select userName from wechat";
-			resultSet = statement.executeQuery(sql);
-			while (resultSet.next()){
-				if (resultSet.getString("userName").equals(username)){
-					status = false;
-					break;
-				}
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return status;
+		UserService service = new UserService();
+		service.updateWechatNameByWechatId(username, UserInfo.getId(idLabel.getText()));
 	}
 	//判断发送框是否为空，并调用Listener的发送消息的方法
 	public void send() throws Exception{
 		String msg = messageBox.getText();
 		if (!messageBox.getText().isEmpty()){
-			Listener.send(msg);
+			ChatListener.send(msg);
 			messageBox.clear();
 		}
 
@@ -537,13 +511,13 @@ public class ChatCon implements Initializable {
 					if (oldValue != null & oldValue != newValue){
 						chatList.getItems().clear();
 						try {
-							sqladd(UserInfo.getId(newValue));
+//							sqladd(UserInfo.getId(newValue));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} else {
 						try {
-							sqladd(UserInfo.getId(newValue));
+//							sqladd(UserInfo.getId(newValue));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -603,20 +577,8 @@ public class ChatCon implements Initializable {
 			@Override
 			public void handle(MouseEvent event) {
 				//向本用户的好友列表中添加此用户
-				Connection connection = MySqlDao.getConnection();
-				PreparedStatement preparedStatement = null;
-				PreparedStatement preparedStatement1 = null;
-				try {
-					String table1 = "u" + id;
-					String table2 = "u" + UserInfo.getId(idLabel.getText());
-					String status = "0";
-					preparedStatement1 = connection.prepareStatement("INSERT INTO " + table1 + " values (" + UserInfo.getId(idLabel.getText()) + ","  + status + ")");
-					preparedStatement1.executeUpdate();
-					preparedStatement = connection.prepareStatement("INSERT INTO " + table2 + " values (" + id + "," + status + ")");
-					preparedStatement.executeUpdate();
-				}catch (Exception e){
-					e.printStackTrace();
-				}
+				UserFriendService userFriendService = new UserFriendService();
+				userFriendService.addUserFriend(UserInfo.getId(idLabel.getText()), id);
 				stage.close();
 			}
 		});
@@ -673,63 +635,63 @@ public class ChatCon implements Initializable {
 		new Thread(t).start();
 	}
 	//用户聊天的历史记录
-	public void sqladd (String toid) throws Exception {
-		String sendid = UserInfo.getId(idLabel.getText());
-		Connection connection = MySqlDao.getConnection();
-		Connection connection1 = MySqlDao.getConnection();
-		Statement statement = connection.createStatement();
-		Statement statement1 = connection1.createStatement();
-		ResultSet resultSet = null;
-		ResultSet resultSet1 = null;
-		String sql = "SELECT log,time FROM log WHERE sendid=" + sendid + " AND toid=" + toid +" ORDER BY time DESC";
-		String sql1 = "SELECT log,time FROM log WHERE sendid=" + toid + " AND toid=" + sendid +" ORDER BY time DESC";
-		resultSet = statement.executeQuery(sql);
-		resultSet1 = statement1.executeQuery(sql1);
-		TreeMap<String ,JSONObject> recive = new TreeMap<>();
-		int i = 0;
-		while (resultSet.next() && i<6){
-			String time = resultSet.getString("time");
-			String log = resultSet.getString("log");
-			JSONObject jsonObject = new JSONObject();
-			try {
-				jsonObject.put("ToId",toid);
-				jsonObject.put("List",new JSONArray());
-				jsonObject.put("MessageType","CHAT");
-				jsonObject.put("Message",log);
-				jsonObject.put("SendId",sendid);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			recive.put(time,jsonObject);
-			i++;
-		}
-		int o = 0;
-		while (resultSet1.next() && o<6){
-			String time = resultSet1.getString("time");
-			String log = resultSet1.getString("log");
-			JSONObject jsonObject = new JSONObject();
-			try {
-				jsonObject.put("ToId",sendid);
-				jsonObject.put("List",new JSONArray());
-				jsonObject.put("MessageType","CHAT");
-				jsonObject.put("Message",log);
-				jsonObject.put("SendId",toid);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			recive.put(time,jsonObject);
-			o++;
-		}
-		recive.descendingMap();
-		int q = 0;
-		Iterator iterator= recive.keySet().iterator();
-		System.out.println(recive.size());
-		while (iterator.hasNext()&&q<6){
-			String key = (String) iterator.next();
-			addChat(recive.get(key));
-			q++;
-		}
-	}
+//	public void sqladd(String toid) throws Exception {
+//		String sendid = UserInfo.getId(idLabel.getText());
+//		Connection connection = MySqlDao.getConnection();
+//		Connection connection1 = MySqlDao.getConnection();
+//		Statement statement = connection.createStatement();
+//		Statement statement1 = connection1.createStatement();
+//		ResultSet resultSet = null;
+//		ResultSet resultSet1 = null;
+//		String sql = "SELECT log,time FROM log WHERE sendid=" + sendid + " AND toid=" + toid +" ORDER BY time DESC";
+//		String sql1 = "SELECT log,time FROM log WHERE sendid=" + toid + " AND toid=" + sendid +" ORDER BY time DESC";
+//		resultSet = statement.executeQuery(sql);
+//		resultSet1 = statement1.executeQuery(sql1);
+//		TreeMap<String ,JSONObject> recive = new TreeMap<>();
+//		int i = 0;
+//		while (resultSet.next() && i<6){
+//			String time = resultSet.getString("time");
+//			String log = resultSet.getString("log");
+//			JSONObject jsonObject = new JSONObject();
+//			try {
+//				jsonObject.put("ToId",toid);
+//				jsonObject.put("List",new JSONArray());
+//				jsonObject.put("MessageType","CHAT");
+//				jsonObject.put("Message",log);
+//				jsonObject.put("SendId",sendid);
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//			recive.put(time,jsonObject);
+//			i++;
+//		}
+//		int o = 0;
+//		while (resultSet1.next() && o<6){
+//			String time = resultSet1.getString("time");
+//			String log = resultSet1.getString("log");
+//			JSONObject jsonObject = new JSONObject();
+//			try {
+//				jsonObject.put("ToId",sendid);
+//				jsonObject.put("List",new JSONArray());
+//				jsonObject.put("MessageType","CHAT");
+//				jsonObject.put("Message",log);
+//				jsonObject.put("SendId",toid);
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//			recive.put(time,jsonObject);
+//			o++;
+//		}
+//		recive.descendingMap();
+//		int q = 0;
+//		Iterator iterator= recive.keySet().iterator();
+//		System.out.println(recive.size());
+//		while (iterator.hasNext()&&q<6){
+//			String key = (String) iterator.next();
+//			addChat(recive.get(key));
+//			q++;
+//		}
+//	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		messageBox.addEventFilter(KeyEvent.KEY_PRESSED,ke ->{
@@ -767,7 +729,7 @@ public class ChatCon implements Initializable {
 							//数据库操作，将两人添加到对方的数据库
 							addFriend(searchCount);
 							//当前用户的userlist的操作
-							Listener.addFrinedForUserList(searchCount);
+							ChatListener.addFrinedForUserList(searchCount);
 							search.clear();
 						} else if (s.equals("-1")){
 							//表示此人不存在
