@@ -15,6 +15,7 @@ import netty.Message;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Server implements Runnable {
 	private int port = 12345;
@@ -24,27 +25,43 @@ public class Server implements Runnable {
 	 * */
 	private final Map<String, Channel> channelMap = new HashMap<>();
 
-	/**
-	 * userid 到 username的映射
-	 * */
-	private final Map<String, String> onlineIdToNameMap = new HashMap<>();
+	// 客户端地址:wechatId
+	private final Map<String, String> clientToIdMap = new HashMap<>();
 
+	// 客户端地址:channel
 	private final Map<String, Channel> clientName2ChannelMap = new HashMap<>();
 
 	public synchronized void setClientName2ChannelMap(String clientName, Channel channel) {
 		clientName2ChannelMap.put(clientName, channel);
 	}
 
+	public synchronized void removeClientChannelMap(String clientName) {
+		clientName2ChannelMap.remove(clientName);
+	}
+
 	public Map<String, Channel> getClientName2ChannelMap() {
 		return this.clientName2ChannelMap;
 	}
 
-	public synchronized void setOnlineIdToNameMap(String userId, String userName) {
-		onlineIdToNameMap.put(userId, userName);
+	public synchronized void setClientToIdMap(String userId, String client) {
+		clientToIdMap.put(client, userId);
 	}
 
-	public Map<String, String> getOnlineIdToNameMap() {
-		return onlineIdToNameMap;
+	/**
+	 * 客户端下线调用
+	 * 首先移除client:userId
+	 * 移除userId:channel
+	 * 移除client:channel
+	 * */
+	public synchronized void removeClientToIdMap(String client) {
+		String id = clientToIdMap.remove(client);
+		channelMap.remove(id);
+		clientName2ChannelMap.remove(client);
+
+	}
+
+	public Map<String, String> getClientToIdMap() {
+		return clientToIdMap;
 	}
 
 
@@ -68,7 +85,8 @@ public class Server implements Runnable {
 	}
 
 	public Message getNotifyMessage() {
-		String msg = JSON.toJSONString(onlineIdToNameMap);
+		Set<String> userIds = channelMap.keySet();
+		String msg = JSON.toJSONString(userIds);
 		Message message = new Message();
 		message.setMessage(msg);
 		message.setType(MessageTypeEnum.NOTIFICATION);
@@ -135,22 +153,29 @@ class ServerHandler extends SimpleChannelInboundHandler<Message> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
 		switch (message.getType()) {
+			/**
+			 * 服务器接收到普通消息，获取其收件人，
+			 * 然后将其装发到对应的用户channel
+			 * */
 			case MESSAGE:
-				// 发送消息
 				nettyServer.writeMsg(message);
 				break;
-
+			/**
+			 *
+			 * */
 			case SIGN:
 				// 新用户上线后
 				String userId = message.getUserId();
 				nettyServer.setChannel(userId, channelHandlerContext.channel());
-				nettyServer.setOnlineIdToNameMap(userId, message.getUserName());
+				nettyServer.setClientToIdMap(channelHandlerContext.channel().remoteAddress().toString(), userId);
 				System.out.println(userId + "注册成功");
 				nettyServer.notifyOnlineMemChange();
 				channelHandlerContext.writeAndFlush(nettyServer.getNotifyMessage());
 				break;
 
 			case NOTIFICATION:
+				break;
+			case FRIENDLIST:
 				break;
 		}
 	}
@@ -176,7 +201,8 @@ class ServerHandler extends SimpleChannelInboundHandler<Message> {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		Channel channel = ctx.channel();
-		channel.close();
-		super.exceptionCaught(ctx, cause);
+		String address = channel.remoteAddress().toString();
+		System.out.println(address + "客户端下线");
+		nettyServer.removeClientToIdMap(address);
 	}
 }
