@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientAdapter {
-	private Map<String, Channel> id2ChannelMap = new ConcurrentHashMap<>();
+	private final Map<String, Channel> id2ChannelMap = new ConcurrentHashMap<>();
 
 	private Map<String, String> id2UserNameMap = new ConcurrentHashMap<>();
 
-	private Map<String, Channel> clientName2ChannelMap = new ConcurrentHashMap<>();
+	private final Map<String, Channel> clientName2ChannelMap = new ConcurrentHashMap<>();
 
 	public void setId2ChannelMap(Long id, Channel channel) {
 		id2ChannelMap.put(String.valueOf(id), channel);

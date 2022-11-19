@@ -49,7 +49,7 @@ public class Client implements Callable<Channel> {
 
 class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
-	private ClientAdapter clientAdapter;
+	private final ClientAdapter clientAdapter = new ClientAdapter();
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {

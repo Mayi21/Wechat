@@ -28,6 +28,7 @@ import javafx.stage.*;
 import mapper.UserFriendMapper;
 import mapper.UserMapper;
 import netty.Message;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,7 +118,7 @@ public class ChatCon implements Initializable {
 		}
 	}
 	//得到用户的好友列表中anotherId的状态
-	public boolean getFriendStatus(String selfId,String anotherId){
+	public boolean getFriendStatus(String selfId, String anotherId){
 		SqlSession sqlSession = MyBatisUtil.getSqlSession();
 		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
 		int friendStatus = -1;
@@ -132,6 +133,7 @@ public class ChatCon implements Initializable {
 		System.out.println("验证之后" + friendStatus);
 		return false;
 	}
+
 	//只有当选中聊天用户时，才可以出现如下的菜单按钮
 	public void opMenu(){
 		MenuItem menuItem1 = new MenuItem("删除好友");
@@ -144,28 +146,33 @@ public class ChatCon implements Initializable {
 		MenuItem menuItem2 = new MenuItem();
 		String selfId = UserInfo.getId(idLabel.getText());
 		String anotherId = UserInfo.getId(currentUserName.getText());
-		if (getFriendStatus(selfId,anotherId)){
-			menuItem2 = new MenuItem("加入黑名单");
-			menuItem2.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					//首先弹出框
-					addFriendToBlackListStage();
-				}
-			});
+		if (ObjectUtils.isEmpty(anotherId)) {
+
 		} else {
-			menuItem2 = new MenuItem("移除黑名单");
-			menuItem2.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					//首先弹出框
-					removeFriendToBlackListStage();
-				}
-			});
+			if (getFriendStatus(selfId, anotherId)){
+				menuItem2 = new MenuItem("加入黑名单");
+				menuItem2.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						//首先弹出框
+						addFriendToBlackListStage();
+					}
+				});
+			} else {
+				menuItem2 = new MenuItem("移除黑名单");
+				menuItem2.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						//首先弹出框
+						removeFriendToBlackListStage();
+					}
+				});
+			}
+			opMenu.getItems().clear();
+			opMenu.getItems().addAll(menuItem1,menuItem2);
 		}
-		opMenu.getItems().clear();
-		opMenu.getItems().addAll(menuItem1,menuItem2);
 	}
+
 	//从黑名单移除用户
 	public void removeFriendToBlackListStage(){
 		Stage stage = new Stage();
@@ -196,6 +203,7 @@ public class ChatCon implements Initializable {
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
+
 	//添加用户到和名单的stage
 	public void addFriendToBlackListStage(){
 		Stage stage = new Stage();
@@ -226,6 +234,7 @@ public class ChatCon implements Initializable {
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
+
 	public void removeFriendToBlackListForDataBase(){
 		String selfId = UserInfo.getId(idLabel.getText());
 		String anotherId = UserInfo.getId(currentUserName.getText());
@@ -237,6 +246,7 @@ public class ChatCon implements Initializable {
 			e.printStackTrace();
 		}
 	}
+
 	//把好友加入到黑名单的数据库操作
 	public void addFriendToBlackListForDataBase(){
 		String selfId = UserInfo.getId(idLabel.getText());
@@ -249,7 +259,8 @@ public class ChatCon implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	//删除好友的syage
+
+	//删除好友的stage
 	public void deleteFriendStage(){
 		Stage stage = new Stage();
 		Text text = new Text("请认真想想");

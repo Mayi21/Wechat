@@ -54,6 +54,7 @@ public class LoginCon implements Initializable {
 			control = fxmlLoader.<ChatCon>getController();
 			LocalContext.setChatCon(control);
 			LocalContext.setWechatId(userId.getText());
+
 			new Thread(new ChatListener()).start();
 			this.scene = new Scene(parent);
 		} else {
