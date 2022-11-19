@@ -19,6 +19,7 @@ import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import service.UserService;
 import util.LocalContext;
 
 import java.io.IOException;
@@ -35,7 +36,6 @@ public class LoginCon implements Initializable {
 	public ChatCon control;
 	private Scene scene;
 	public static LoginCon loginCon;
-	public static String userName;
 	public static Stage stageL;
 
 	public LoginCon(){
@@ -47,14 +47,13 @@ public class LoginCon implements Initializable {
 	public void login() throws Exception{
 		String id = userId.getText();
 		String pa = passwd.getText();
-		if (LoginAuth.check(id,pa)) {
-			userName = LoginAuth.userName;
+		if (LoginAuth.check(id, pa)) {
 			FXMLLoader fxmlLoader =new FXMLLoader(getClass().getResource("fxml/ChatList.fxml"));
 			Parent parent = (Pane) fxmlLoader.load();
 			control = fxmlLoader.<ChatCon>getController();
 			LocalContext.setChatCon(control);
 			LocalContext.setWechatId(userId.getText());
-
+			LocalContext.setWechatName(new UserService().getWechatNameByWechatId(userId.getText()));
 			new Thread(new ChatListener()).start();
 			this.scene = new Scene(parent);
 		} else {

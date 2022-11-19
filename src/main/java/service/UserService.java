@@ -1,5 +1,6 @@
 package service;
 
+import entity.UserDo;
 import mapper.UserMapper;
 import org.apache.ibatis.session.SqlSession;
 import util.MyBatisUtil;
@@ -49,5 +50,9 @@ public class UserService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public UserDo getUserById(String id) {
+		return mapper.getUserByWechatId(id);
 	}
 }
