@@ -11,8 +11,8 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
-    <select id="getUserFriend" resultType="string">
-        select friend_id from t_friend where wechat_id=#{wechatId}
+    <select id="getUserFriend" resultType="map">
+        select f.friend_id, u.wechat_name from t_friend f, t_user u where f.friend_id=u.wechat_id and f.wechat_id=#{wechatId}
     </select>
 
     <select id="getFriendStatus" resultType="int">
