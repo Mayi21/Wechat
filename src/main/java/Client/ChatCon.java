@@ -1,5 +1,6 @@
 package Client;
 
+import entity.UserViewVo;
 import enums.BubbleSpecEnum;
 import Client.bubble.BubbledLabel;
 import javafx.application.Platform;
@@ -453,24 +454,24 @@ public class ChatCon implements Initializable {
 		}
 
 	}
+
 	//设置当前用户的用户列表
-	public void setUserList(JSONObject message) throws Exception{
+	public void setUserList(Message message) throws Exception{
 		Platform.runLater(() ->  {
-			List<String> list = new LinkedList<>();
-			try {
-				JSONArray jsonArray = message.getJSONArray("List");
-				for (int i = 0;i < jsonArray.length();i++){
-					list.add(UserInfo.getUserName(jsonArray.getString(i)));
-				}
-			} catch (Exception e){
-				e.printStackTrace();
-			}
-			ObservableList<String> users = FXCollections.observableList(list);
+			UserFriendService service = new UserFriendService();
+			Map<String, String> friendIdAndName = service.getFriendIdAndName(LocalContext.getWechatId());
+			List<UserViewVo> list = new LinkedList<>();
+			friendIdAndName.entrySet().forEach(item -> {
+				UserViewVo userViewVo = new UserViewVo(item.getKey(), item.getValue());
+				list.add(userViewVo);
+			});
+
+			ObservableList<UserViewVo> users = FXCollections.observableList(list);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
 			Text text = null;
 			try {
-				text = new Text(message.getString("Message"));
+//				text = new Text(message.getString("Message"));
 				text.setFont(new Font(15));
 				text.setFill(Color.BLACK);
 				VBox box = new VBox();
