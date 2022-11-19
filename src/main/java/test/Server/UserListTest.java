@@ -1,6 +1,6 @@
 package test.Server; 
 
-import Server.UserList;
+import server.UserList;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;

@@ -41,7 +41,7 @@ public class UserServiceTest {
 	@Test
 	public void testUpdate() throws Exception {
 		UserService service = new UserService();
-		service.update(new UserDo("xiaoming", null, "1234567"));
+		service.updatePasswdByWechatId("1234567","xiaoming");
 	//TODO: Test goes here...
 	}
 

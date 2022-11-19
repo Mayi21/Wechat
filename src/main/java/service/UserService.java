@@ -1,13 +1,8 @@
 package service;
 
-import entity.UserDo;
-import entity.UserFriendDo;
-import mapper.UserFriendMapper;
 import mapper.UserMapper;
 import org.apache.ibatis.session.SqlSession;
 import util.MyBatisUtil;
-
-import java.lang.ref.PhantomReference;
 
 public class UserService {
 
@@ -19,10 +14,6 @@ public class UserService {
 		sqlSession = MyBatisUtil.getSqlSession();
 		mapper = sqlSession.getMapper(UserMapper.class);
 	}
-//	public static void main(String[] args) {
-//		mapper.addFriend(new UserFriendDo("xiao", "xaoo"));
-//		sqlSession.commit();
-//	}
 
 	public void updateWechatNameByWechatId(String wechatName, String wechatId) {
 		try {
@@ -40,5 +31,23 @@ public class UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getWechatNameByWechatId(String wechatId) {
+		try {
+			return mapper.getWechatNameByWechatId(wechatId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getWechatIdByWechatName(String wechatName) {
+		try {
+			return mapper.getWechatNameByWechatId(wechatName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
