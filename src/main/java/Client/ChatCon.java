@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import service.UserFriendService;
 import service.UserService;
 import util.ImageUtil;
+import util.LocalContext;
 import util.MyBatisUtil;
 import util.MySqlDao;
 import java.io.File;
@@ -103,7 +104,7 @@ public class ChatCon implements Initializable {
 			chatList.getItems().add(hboxTask.getValue());
 		});
 
-		if (message.getUserId().equals(UserInfo.getId(idLabel.getText()))) {
+		if (message.getUserId().equals(LocalContext.getWechatId())) {
 			Thread thread = new Thread(hBoxTask);
 			thread.setDaemon(true);
 			thread.start();
@@ -144,7 +145,7 @@ public class ChatCon implements Initializable {
 			}
 		});
 		MenuItem menuItem2 = new MenuItem();
-		String selfId = UserInfo.getId(idLabel.getText());
+		String selfId = LocalContext.getWechatId();
 		String anotherId = UserInfo.getId(currentUserName.getText());
 		if (ObjectUtils.isEmpty(anotherId)) {
 
@@ -236,7 +237,7 @@ public class ChatCon implements Initializable {
 	}
 
 	public void removeFriendToBlackListForDataBase(){
-		String selfId = UserInfo.getId(idLabel.getText());
+		String selfId = LocalContext.getWechatId();
 		String anotherId = UserInfo.getId(currentUserName.getText());
 		SqlSession sqlSession = MyBatisUtil.getSqlSession();
 		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
@@ -249,7 +250,7 @@ public class ChatCon implements Initializable {
 
 	//把好友加入到黑名单的数据库操作
 	public void addFriendToBlackListForDataBase(){
-		String selfId = UserInfo.getId(idLabel.getText());
+		String selfId = LocalContext.getWechatId();
 		String anotherId = UserInfo.getId(currentUserName.getText());
 		SqlSession sqlSession = MyBatisUtil.getSqlSession();
 		UserFriendMapper mapper = sqlSession.getMapper(UserFriendMapper.class);
@@ -295,7 +296,7 @@ public class ChatCon implements Initializable {
 	//删除好友从数据库
 	public void deleteFriend(){
 		//删除好友在两个人的数据库中
-		String selfId = UserInfo.getId(idLabel.getText());
+		String selfId = LocalContext.getWechatId();
 		String anotherId = UserInfo.getId(currentUserName.getText());
 		UserFriendService userFriendService = new UserFriendService();
 		userFriendService.deleteUserFriend(selfId, anotherId);
@@ -368,7 +369,7 @@ public class ChatCon implements Initializable {
 			public void handle(ActionEvent event) {
 				imageMenu.setGraphic(imageView);
 				//设置新头像后，将新头像覆盖老头像
-				String s = ImageUtil.getImageFilePath(UserInfo.getId(idLabel.getText()) + ".jpg").replace("file:", "");
+				String s = ImageUtil.getImageFilePath(LocalContext.getWechatId() + ".jpg").replace("file:", "");
 				File file = new File(newPath[0]);
 				File oldFile = new File(s);
 				oldFile.delete();
@@ -441,7 +442,7 @@ public class ChatCon implements Initializable {
 	//更新用户的username
 	public void update(String username){
 		UserService service = new UserService();
-		service.updateWechatNameByWechatId(username, UserInfo.getId(idLabel.getText()));
+		service.updateWechatNameByWechatId(username, LocalContext.getWechatId());
 	}
 	//判断发送框是否为空，并调用Listener的发送消息的方法
 	public void send() throws Exception{
@@ -459,9 +460,7 @@ public class ChatCon implements Initializable {
 			try {
 				JSONArray jsonArray = message.getJSONArray("List");
 				for (int i = 0;i < jsonArray.length();i++){
-					//if (!jsonArray.getString(i).equals(UserInfo.getId(idLabel.getText()))){
 					list.add(UserInfo.getUserName(jsonArray.getString(i)));
-					//}
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -589,7 +588,7 @@ public class ChatCon implements Initializable {
 			public void handle(MouseEvent event) {
 				//向本用户的好友列表中添加此用户
 				UserFriendService userFriendService = new UserFriendService();
-				userFriendService.addUserFriend(UserInfo.getId(idLabel.getText()), id);
+				userFriendService.addUserFriend(LocalContext.getWechatId(), id);
 				stage.close();
 			}
 		});
@@ -599,6 +598,7 @@ public class ChatCon implements Initializable {
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
+
 	//搜索好友已经是你好友的弹框
 	public void searchThisUserIsYourFriend(){
 		Stage stage = new Stage();
@@ -622,6 +622,7 @@ public class ChatCon implements Initializable {
 		};
 		new Thread(t).start();
 	}
+
 	//搜索好友时此人不存在的弹框
 	public void searchNoThisUserStage(){
 		Stage stage = new Stage();
@@ -645,64 +646,7 @@ public class ChatCon implements Initializable {
 		};
 		new Thread(t).start();
 	}
-	//用户聊天的历史记录
-//	public void sqladd(String toid) throws Exception {
-//		String sendid = UserInfo.getId(idLabel.getText());
-//		Connection connection = MySqlDao.getConnection();
-//		Connection connection1 = MySqlDao.getConnection();
-//		Statement statement = connection.createStatement();
-//		Statement statement1 = connection1.createStatement();
-//		ResultSet resultSet = null;
-//		ResultSet resultSet1 = null;
-//		String sql = "SELECT log,time FROM log WHERE sendid=" + sendid + " AND toid=" + toid +" ORDER BY time DESC";
-//		String sql1 = "SELECT log,time FROM log WHERE sendid=" + toid + " AND toid=" + sendid +" ORDER BY time DESC";
-//		resultSet = statement.executeQuery(sql);
-//		resultSet1 = statement1.executeQuery(sql1);
-//		TreeMap<String ,JSONObject> recive = new TreeMap<>();
-//		int i = 0;
-//		while (resultSet.next() && i<6){
-//			String time = resultSet.getString("time");
-//			String log = resultSet.getString("log");
-//			JSONObject jsonObject = new JSONObject();
-//			try {
-//				jsonObject.put("ToId",toid);
-//				jsonObject.put("List",new JSONArray());
-//				jsonObject.put("MessageType","CHAT");
-//				jsonObject.put("Message",log);
-//				jsonObject.put("SendId",sendid);
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//			recive.put(time,jsonObject);
-//			i++;
-//		}
-//		int o = 0;
-//		while (resultSet1.next() && o<6){
-//			String time = resultSet1.getString("time");
-//			String log = resultSet1.getString("log");
-//			JSONObject jsonObject = new JSONObject();
-//			try {
-//				jsonObject.put("ToId",sendid);
-//				jsonObject.put("List",new JSONArray());
-//				jsonObject.put("MessageType","CHAT");
-//				jsonObject.put("Message",log);
-//				jsonObject.put("SendId",toid);
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//			recive.put(time,jsonObject);
-//			o++;
-//		}
-//		recive.descendingMap();
-//		int q = 0;
-//		Iterator iterator= recive.keySet().iterator();
-//		System.out.println(recive.size());
-//		while (iterator.hasNext()&&q<6){
-//			String key = (String) iterator.next();
-//			addChat(recive.get(key));
-//			q++;
-//		}
-//	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		messageBox.addEventFilter(KeyEvent.KEY_PRESSED,ke ->{
@@ -734,8 +678,8 @@ public class ChatCon implements Initializable {
 				if (event.getCode().equals(KeyCode.ENTER)){
 					String searchCount = search.getText();
 					if (!searchCount.isEmpty()){
-						String s = searchUser(searchCount,UserInfo.getId(idLabel.getText()));
-						if (s.equals("0") & !searchCount.equals(UserInfo.getId(idLabel.getText()))){
+						String s = searchUser(searchCount,LocalContext.getWechatId());
+						if (s.equals("0") & !searchCount.equals(LocalContext.getWechatId())){
 							//表示此人不是你的好友,进行添加好友
 							//数据库操作，将两人添加到对方的数据库
 							addFriend(searchCount);
