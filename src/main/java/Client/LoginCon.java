@@ -85,6 +85,7 @@ public class LoginCon implements Initializable {
 			control.setUserLabel(userId.getText());
 			control.setImageView(userId.getText());
 		});
+
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

@@ -8,27 +8,33 @@ import util.LocalContext;
 
 public class ChatListener implements Runnable {
 	private static Channel channel;
-	//这个就是登录者的ID
-	private static String id;
 
 	static {
 		Client client = new Client();
 		try {
 			channel = client.call();
+			while (!channel.isActive()) {
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			sign();
 		} catch (Exception e) {
 			channel = null;
 			e.printStackTrace();
 		}
+
 	}
 
 	@Override
 	public void run(){
 		try {
 			LoginCon.getLoginCon().showScene();
-		}catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		sign();
 	}
 
 	// 发送普通消息
@@ -37,16 +43,16 @@ public class ChatListener implements Runnable {
 		message.setMessage(msg);
 		message.setToUserId(UserInfo.getId(ChatCon.current));
 		message.setType(MessageTypeEnum.MESSAGE);
-		message.setUserId(id);
+		message.setUserId(LocalContext.getWechatId());
 		LocalContext.getChatCon().addChat(message);
 		channel.writeAndFlush(message);
 	}
 
 	// 注册消息
-	public void sign() {
+	public static void sign() {
 		Message message = new Message();
 		message.setType(MessageTypeEnum.SIGN);
-		message.setUserId(id);
+		message.setUserId(LocalContext.getWechatId());
 		channel.writeAndFlush(message);
 	}
 
@@ -54,7 +60,7 @@ public class ChatListener implements Runnable {
 	public static void addFrinedForUserList(String anotherId) {
 		Message message = new Message();
 		message.setType(MessageTypeEnum.FRIENDLIST);
-		message.setUserId(id);
+		message.setUserId(LocalContext.getWechatId());
 		message.setToUserId(anotherId);
 		channel.writeAndFlush(message);
 	}

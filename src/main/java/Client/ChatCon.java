@@ -455,7 +455,7 @@ public class ChatCon implements Initializable {
 
 	}
 
-	//设置当前用户的用户列表
+	//设置当前用户的好友列表
 	public void setUserList(Message message) throws Exception{
 		Platform.runLater(() ->  {
 			UserFriendService service = new UserFriendService();
@@ -711,6 +711,21 @@ public class ChatCon implements Initializable {
 					e.printStackTrace();
 				}
 			}
+		});
+	}
+
+	public void setFriendList() throws Exception{
+		Platform.runLater(() ->  {
+			UserFriendService service = new UserFriendService();
+			Map<String, String> friendIdAndName = service.getFriendIdAndName(LocalContext.getWechatId());
+			List<UserViewVo> list = new LinkedList<>();
+			friendIdAndName.entrySet().forEach(item -> {
+				UserViewVo userViewVo = new UserViewVo(item.getKey(), item.getValue());
+				list.add(userViewVo);
+			});
+			ObservableList<UserViewVo> users = FXCollections.observableList(list);
+			userList.setItems(users);
+			userList.setCellFactory(new CellRenderer());
 		});
 	}
 }

@@ -187,7 +187,7 @@ class ServerHandler extends SimpleChannelInboundHandler<Message> {
 		 * */
 		Channel channel = ctx.channel();
 		String clientName = channel.remoteAddress().toString();
-		System.out.println("RemoteAddress:"+clientName+"active!");
+		System.out.println("RemoteAddress: "+clientName+" active!");
 		nettyServer.setClientName2ChannelMap(clientName, channel);
 		// 获取当前在线的用户，发送给新上线的用户
 		channel.writeAndFlush(nettyServer.getNotifyMessage());
@@ -202,7 +202,7 @@ class ServerHandler extends SimpleChannelInboundHandler<Message> {
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		Channel channel = ctx.channel();
 		String address = channel.remoteAddress().toString();
-		System.out.println(address + "客户端下线");
+		System.out.println(address + " 客户端下线");
 		nettyServer.removeClientToIdMap(address);
 	}
 }
