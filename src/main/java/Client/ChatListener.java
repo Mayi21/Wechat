@@ -21,6 +21,7 @@ public class ChatListener implements Runnable {
 				}
 			}
 			sign();
+			LocalContext.getChatCon().setFriendList();
 		} catch (Exception e) {
 			channel = null;
 			e.printStackTrace();
@@ -41,7 +42,7 @@ public class ChatListener implements Runnable {
 	public static void send(String msg) throws Exception{
 		Message message = new Message();
 		message.setMessage(msg);
-		message.setToUserId(UserInfo.getId(ChatCon.current));
+		message.setToUserId(ChatCon.current);
 		message.setType(MessageTypeEnum.MESSAGE);
 		message.setUserId(LocalContext.getWechatId());
 		LocalContext.getChatCon().addChat(message);

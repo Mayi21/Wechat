@@ -55,8 +55,7 @@ class ClientHandler extends SimpleChannelInboundHandler<Message> {
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
 		switch (message.getType()) {
 			case MESSAGE:
-				System.out.printf("收到一条来自 %d.%s 的消息：%s%n", message.getUserId(),
-						message.getUserName(), message.getMessage());
+				System.out.printf("收到一条来自 %s 的消息：%s%n", message.getUserId(), message.getMessage());
 				LocalContext.getChatCon().addChat(message);
 				break;
 			case FRIENDLIST:

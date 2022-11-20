@@ -1,5 +1,6 @@
 package client;
 
+import entity.UserViewVo;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;

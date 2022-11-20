@@ -42,6 +42,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChatCon implements Initializable {
 	@FXML private TextArea messageBox;
@@ -57,7 +58,9 @@ public class ChatCon implements Initializable {
 
 	//将聊天信息登记到聊天列表中
 	public synchronized void addChat(Message message) throws Exception {
-		Task<HBox> hBoxTask = new Task<HBox>() {
+		System.out.println("add to chat list");
+		// 发送者消息框
+		Task<HBox> sendMessageBox = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
 				String id = message.getUserId();
@@ -75,10 +78,11 @@ public class ChatCon implements Initializable {
 				return x;
 			}
 		};
-		hBoxTask.setOnSucceeded(event -> {
-			chatList.getItems().add(hBoxTask.getValue());
+		sendMessageBox.setOnSucceeded(event -> {
+			chatList.getItems().add(sendMessageBox.getValue());
 		});
-		Task<HBox> hboxTask = new Task<HBox>() {
+		// 好友消息框
+		Task<HBox> freindMessageBox = new Task<HBox>() {
 			@Override
 			protected HBox call() throws Exception {
 				String id = message.getUserId();
@@ -96,19 +100,19 @@ public class ChatCon implements Initializable {
 				return x;
 			}
 		};
-		hboxTask.setOnSucceeded(event -> {
-			chatList.getItems().add(hboxTask.getValue());
+		freindMessageBox.setOnSucceeded(event -> {
+			chatList.getItems().add(freindMessageBox.getValue());
 		});
 
 		if (message.getUserId().equals(LocalContext.getWechatId())) {
-			Thread thread = new Thread(hBoxTask);
+			Thread thread = new Thread(sendMessageBox);
 			thread.setDaemon(true);
 			thread.start();
-		} else if (message.getUserId().equals(UserInfo.getId(currentUserName.getText()))) {
+		} else if (message.getToUserId().equals(LocalContext.getWechatId())) {
 			String selfId = message.getUserId();
 			String anotherId = message.getToUserId();
 			if (getFriendStatus(anotherId,selfId)){
-				Thread thread = new Thread(hboxTask);
+				Thread thread = new Thread(freindMessageBox);
 				thread.setDaemon(true);
 				thread.start();
 			}
@@ -454,16 +458,16 @@ public class ChatCon implements Initializable {
 	public void setUserList(Message message) throws Exception{
 		Platform.runLater(() ->  {
 			UserFriendService service = new UserFriendService();
-			Map<String, String> friendIdAndName = service.getFriendIdAndName(LocalContext.getWechatId());
-			List<UserViewVo> list = new LinkedList<>();
-			friendIdAndName.entrySet().forEach(item -> {
-				UserViewVo userViewVo = new UserViewVo(item.getKey(), item.getValue());
-				list.add(userViewVo);
-			});
-
-			ObservableList<UserViewVo> users = FXCollections.observableList(list);
-			userList.setItems(users);
-			userList.setCellFactory(new CellRenderer());
+//			Map<String, String> friendIdAndName = service.getFriendIdAndName(LocalContext.getWechatId());
+//			List<UserViewVo> list = new LinkedList<>();
+//			friendIdAndName.entrySet().forEach(item -> {
+//				UserViewVo userViewVo = new UserViewVo(item.getKey(), item.getValue());
+//				list.add(userViewVo);
+//			});
+//
+//			ObservableList<UserViewVo> users = FXCollections.observableList(list);
+//			userList.setItems(users);
+//			userList.setCellFactory(new CellRenderer());
 			Text text = null;
 			try {
 //				text = new Text(message.getString("Message"));
@@ -505,31 +509,19 @@ public class ChatCon implements Initializable {
 	public void tui(){
 		LoginCon.stageL.close();
 	}
+
 	//得到正在聊天的用户名称
 	/**
 	 * TODO 得到当前的用户
 	 */
 	public void getToUser(){
+		System.out.println("get to user");
 		opMenu();
-		userList.getSelectionModel().selectedItemProperty().addListener(
-				(ChangeListener<String>) (observable, oldValue, newValue) -> {
-					currentUserName.setText(newValue);
-					if (oldValue != null & oldValue != newValue){
-						chatList.getItems().clear();
-						try {
-//							sqladd(UserInfo.getId(newValue));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-//							sqladd(UserInfo.getId(newValue));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					ChatCon.current = newValue;
-				});
+		Object selectedItem = userList.getSelectionModel().getSelectedItem();
+		String[] split = selectedItem.toString().split("/");
+		ChatCon.current = split[1];
+		System.out.println(Arrays.toString(split));
+		currentUserName.setText(selectedItem.toString());
 	}
 	//搜索用户
 	public String searchUser(String searchId,String userId){
@@ -709,16 +701,12 @@ public class ChatCon implements Initializable {
 		});
 	}
 
-	public void setFriendList() throws Exception{
+	public void setFriendList() {
 		Platform.runLater(() ->  {
 			UserFriendService service = new UserFriendService();
-			Map<String, String> friendIdAndName = service.getFriendIdAndName(LocalContext.getWechatId());
-			List<UserViewVo> list = new LinkedList<>();
-			friendIdAndName.entrySet().forEach(item -> {
-				UserViewVo userViewVo = new UserViewVo(item.getKey(), item.getValue());
-				list.add(userViewVo);
-			});
-			ObservableList<UserViewVo> users = FXCollections.observableList(list);
+			List<UserViewVo> friendIdAndName = service.getFriendIdAndName(LocalContext.getWechatId());
+			List<String> collect = friendIdAndName.stream().map(u -> u.toString()).collect(Collectors.toList());
+			ObservableList<String> users = FXCollections.observableList(collect);
 			userList.setItems(users);
 			userList.setCellFactory(new CellRenderer());
 		});
