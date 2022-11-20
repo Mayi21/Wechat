@@ -1,4 +1,4 @@
-package Client;
+package client;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;

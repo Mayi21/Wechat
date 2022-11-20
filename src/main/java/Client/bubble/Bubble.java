@@ -1,4 +1,4 @@
-package Client.bubble;
+package client.bubble;
 
 import enums.BubbleSpecEnum;
 import javafx.scene.shape.*;

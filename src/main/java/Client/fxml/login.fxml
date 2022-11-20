@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="601.0" style="-fx-background-color: linear-gradient(to right,#a1c4fd,#c2e9fb);" stylesheets="@../login.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.LoginCon">
+<BorderPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="601.0" style="-fx-background-color: linear-gradient(to right,#a1c4fd,#c2e9fb);" stylesheets="@../login.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.LoginCon">
     <center>
         <GridPane alignment="CENTER" prefHeight="191.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <columnConstraints>

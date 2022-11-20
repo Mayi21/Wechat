@@ -1,6 +1,6 @@
 package util;
 
-import Client.ChatCon;
+import client.ChatCon;
 
 public class LocalContext {
 

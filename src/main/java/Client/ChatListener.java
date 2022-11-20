@@ -1,4 +1,4 @@
-package Client;
+package client;
 
 import enums.MessageTypeEnum;
 import io.netty.channel.Channel;

@@ -1,16 +1,6 @@
-package Client;
+package client;
 
-import mapper.UserMapper;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.ibatis.session.SqlSession;
 import service.UserService;
-import util.MyBatisUtil;
-import util.MySqlDao;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Objects;
 
 public class UserInfo {
 

@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="540.0" maxWidth="960.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" stylesheets="@../Chat.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ChatCon">
+<BorderPane maxHeight="540.0" maxWidth="960.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" stylesheets="@../Chat.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.ChatCon">
     <top>
         <HBox prefHeight="51.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to right,#a1c4fd,#c2e9fb);" BorderPane.alignment="CENTER">
             <children>

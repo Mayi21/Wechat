@@ -1,12 +1,9 @@
 package test.Client; 
 
-import Client.UserInfo;
+import client.UserInfo;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
-
-import javax.sound.midi.Soundbank;
-import java.sql.SQLOutput;
 
 /** 
 * UserInfo Tester. 
