@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.After;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /** 
 * UserList Tester. 
@@ -31,7 +32,7 @@ public class UserListTest {
 	*/
 	@Test
 	public void testGetFriendList() throws Exception {
-		LinkedList<String> friendList = UserList.getFriendList("xiaoli");
+		List<String> friendList = UserList.getFriendList("xiaoli");
 		System.out.println(friendList.toString());
 	}
 

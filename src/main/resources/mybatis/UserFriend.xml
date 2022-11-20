@@ -11,7 +11,13 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     </resultMap>
-    <select id="getUserFriend" resultType="map">
+
+    <resultMap id="UserViewMap" type="entity.UserViewVo">
+        <result column="wechat_id" property="id" jdbcType="VARCHAR" />
+        <result column="wechat_name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getUserFriend" resultMap="UserViewMap">
         select f.friend_id, u.wechat_name from t_friend f, t_user u where f.friend_id=u.wechat_id and f.wechat_id=#{wechatId}
     </select>
 

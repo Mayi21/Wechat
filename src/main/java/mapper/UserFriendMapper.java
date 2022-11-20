@@ -3,13 +3,16 @@ package mapper;
 
 import entity.UserDo;
 import entity.UserFriendDo;
+import entity.UserViewVo;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public interface UserFriendMapper {
-	public Map<String, String> getUserFriend(String wechatId);
+	public List<UserViewVo> getUserFriend(String wechatId);
 
 	public int getFriendStatus(@Param("wechatId") String wechatId, @Param("friendId") String friendId);
 

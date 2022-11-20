@@ -152,6 +152,7 @@ class ServerHandler extends SimpleChannelInboundHandler<Message> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
+		System.out.println(message.toString());
 		switch (message.getType()) {
 			/**
 			 * 服务器接收到普通消息，获取其收件人，
